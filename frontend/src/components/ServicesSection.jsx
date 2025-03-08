@@ -27,13 +27,13 @@ function ServicesSection() {
                 </h2>
                 <div className="flex flex-wrap justify-center gap-6 md:gap-8 mt-8">
                     {services.map((service, index) => (
-                        <div 
-                            key={index} 
+                        <div
+                            key={index}
                             className="bg-primary-content text-black rounded-lg shadow-lg p-2 w-full max-w-sm flex flex-col items-center md:p-6"
                         >
                             <img src={service.image} alt={service.title} className="w-32 h-32" />
                             <h3 className="text-base font-semibold mt-4 md:text-xl">{service.title}</h3>
-                            <p className="text-base text-sm text-base mt-2 md:text-base">{service.description}</p>
+                            <p className="text-base mt-2 md:text-base">{service.description}</p>
                         </div>
                     ))}
                 </div>
