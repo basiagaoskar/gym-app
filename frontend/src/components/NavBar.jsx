@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Link as ScrollLink } from 'react-scroll'
 import { Menu, X } from 'lucide-react';
 
@@ -31,7 +32,9 @@ function NavBar() {
                         <li><ScrollLink to="services" smooth={true} duration={500} offset={navOffset} className='hover:text-secondary cursor-pointer'>Services</ScrollLink></li>
                         <li><ScrollLink to="signup" smooth={true} duration={500} offset={navOffset} className='hover:text-secondary cursor-pointer'>Sign Up</ScrollLink></li>
                     </ul>
+                    <Link to="/login">
                     <button className='hidden md:block btn btn-primary text-2xl rounded-full px-5'>Sign In</button>
+                    </Link>
 
                     <Menu className='md:hidden cursor-pointer' onClick={toggleMenu} />
                 </div>

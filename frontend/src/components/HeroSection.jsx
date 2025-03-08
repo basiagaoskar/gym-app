@@ -13,7 +13,7 @@ function HeroSection() {
       <div className="z-10 max-w-4xl px-10">
         <h2 className="text-4xl md:text-8xl font-bold mb-20">Workout Smarter<br /> Not Harder</h2>
         <p className="mt-4 text-3xl mb-20">Register today to create custom workout routines and stay on top of your fitness goals!</p>
-        <button className="btn btn-primary text-2xl rounded-full md:text-4xl rounded-full p-8 mt-6">
+        <button className="btn btn-primary text-2xl rounded-full md:text-4xl p-8 mt-6">
           Get Started
         </button>
       </div>
