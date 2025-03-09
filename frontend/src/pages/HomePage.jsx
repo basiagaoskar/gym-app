@@ -18,9 +18,9 @@ function HomePage() {
 
                 <div className="absolute inset-0 bg-black/60"></div>
 
-                <div className="z-10 max-w-4xl px-10">
-                    <h2 className="text-4xl md:text-8xl font-bold mb-20">Workout Smarter<br /> Not Harder</h2>
-                    <p className="mt-4 text-3xl mb-20">Register today to create custom workout routines and stay on top of your fitness goals!</p>
+                <div className="text-primary-content z-10 max-w-4xl px-10">
+                    <h2 className="text-3xl sm:text-6xl  md:text-8xl font-bold mb-20">Workout Smarter<br /> Not Harder</h2>
+                    <p className="text-xl mt-4 sm:text-3xl mb-20">Register today to create custom workout routines and stay on top of your fitness goals!</p>
                     <Link to="/signup">
                         <button className="btn btn-primary text-2xl rounded-full md:text-4xl p-8 mt-6">
                             Get Started

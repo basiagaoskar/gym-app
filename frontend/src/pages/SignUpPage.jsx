@@ -23,7 +23,7 @@ function SignUpPage() {
             <Logo />
             <div className='bg-primary min-h-screen flex justify-center items-center px-4 sm:px-6'>
 
-                <div className='bg-neutral w-108 max-w-9/10 sm:max-w-md md:max-w-lg lg:max-w-xl p-8 rounded-lg'>
+                <div className='bg-neutral text-primary-content w-108 max-w-9/10 sm:max-w-md md:max-w-lg lg:max-w-xl p-8 rounded-lg'>
                     <h2 className='text-2xl sm:text-3xl font-bold mb-15 text-center'>Create your account</h2>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-5'>

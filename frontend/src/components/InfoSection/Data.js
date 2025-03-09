@@ -1,7 +1,7 @@
 export const homeObjOne = {
     id: 'about',
     background: 'bg-base-100',
-    fontcolor: 'text-primary-content',
+    fontcolor: 'text-base-content',
     topLine: 'UNLIMITED FITNESS',
     topLineColor: 'text-secondary',
     headline: 'Unlimited Workouts with Zero Limits',
@@ -17,7 +17,7 @@ export const homeObjOne = {
 export const homeObjTwo = {
     id: 'discover',
     background: 'bg-primary-content',
-    fontcolor: 'text-base-100',
+    fontcolor: 'text-neutral',
     topLine: 'YOUR WORKOUT, YOUR RULES',
     topLineColor: 'text-primary',
     headline: 'Discover Your Perfect Workout',
@@ -33,7 +33,7 @@ export const homeObjTwo = {
 export const homeObjThree = {
     id: 'signup',
     background: 'bg-primary-content',
-    fontcolor: 'text-base-100',
+    fontcolor: 'text-neutral',
     topLine: 'JOIN OUR COMMUNITY',
     topLineColor: 'text-primary',
     headline: 'Creating your account is super easy',

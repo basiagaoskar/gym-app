@@ -22,7 +22,7 @@ function LoginPage() {
     <>
       <Logo />
       <div className='bg-primary h-screen flex justify-center items-center'>
-        <div className='bg-neutral w-108 max-w-9/10 p-8 rounded-lg'>
+        <div className='bg-neutral w-108 max-w-9/10 p-8 rounded-lg text-neutral-content'>
           <h2 className='text-2xl sm:text-3xl font-bold mb-15 text-center'>Sign in to your account</h2>
           <form onSubmit={handleSubmit}>
             <div className='mb-5'>
