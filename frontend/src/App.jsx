@@ -1,19 +1,28 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
+import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import { useThemeStore } from './store/useThemeStore';
+import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
   const { theme } = useThemeStore();
+
+  const loggedIn = true;
+
   return (
     <>
       <div data-theme={theme} >
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/" element={loggedIn ? <HomePage /> : <Navigate to="/start" />} />
+          <Route path="/login" element={!loggedIn ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/signup" element={!loggedIn ? <SignUpPage /> : <Navigate to="/" />} />
+          <Route path="/profile" element={loggedIn ? <ProfilePage /> : <Navigate to="/" />} />
+          <Route path="/settings" element={loggedIn ? <SettingsPage /> : <Navigate to="/" />} />
+          <Route path="/start" element={<StartPage />} />
         </Routes >
       </div>
     </>
