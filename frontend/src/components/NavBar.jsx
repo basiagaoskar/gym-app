@@ -43,11 +43,11 @@ function NavBar() {
             <nav className='bg-neutral w-full min-h-[calc(6vh)] px-8 py-4 flex justify-center items-center sticky top-0 z-50'>
                 <div className='w-full text-xl flex justify-between items-center container mx-auto'>
                     <ScrollLink to="home" smooth={true} duration={500} offset={navOffset}>
-                        <h1 className='text-base-100 font-bold text-2xl md:text-3xl lg:text-4xl cursor-pointer'>Ziutki Gym</h1>
+                        <h1 className='text-neutral-content font-bold text-2xl md:text-3xl lg:text-4xl cursor-pointer'>Ziutki Gym</h1>
                     </ScrollLink>
 
                     {/* Bigger devices menu */}
-                    <ul className='text-primary-content hidden xl:flex gap-12'>
+                    <ul className='hidden xl:flex gap-12'>
                         {["about", "discover", "services", "signup"].map((section) => (
                             <li key={section}>
                                 <ScrollLink
@@ -55,7 +55,7 @@ function NavBar() {
                                     smooth={true}
                                     duration={500}
                                     offset={navOffset}
-                                    className={`${activeSection === section ? "text-secondary" : "text-base-100"} hover:text-secondary cursor-pointer`}
+                                    className={`${activeSection === section ? "text-secondary" : "text-neutral-content"} hover:text-secondary cursor-pointer`}
                                 >
                                     {section.charAt(0).toUpperCase() + section.slice(1)}
                                 </ScrollLink>
@@ -64,7 +64,7 @@ function NavBar() {
                     </ul>
 
                     <Link to="/login">
-                        <button className='hidden xl:block btn btn-primary text-2xl rounded-full px-5'>Sign In</button>
+                        <button className='btn btn-primary hidden xl:block text-2xl rounded-full px-5'>Sign In</button>
                     </Link>
 
                     <Menu className='xl:hidden absolute top-5 right-8 text-primary-content cursor-pointer ' onClick={toggleMenu} />

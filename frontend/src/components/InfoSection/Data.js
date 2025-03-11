@@ -17,7 +17,7 @@ export const homeObjOne = {
 export const homeObjTwo = {
     id: 'discover',
     background: 'bg-primary-content',
-    fontcolor: 'text-neutral',
+    fontcolor: 'text-base-100',
     topLine: 'YOUR WORKOUT, YOUR RULES',
     topLineColor: 'text-primary',
     headline: 'Discover Your Perfect Workout',
@@ -33,7 +33,7 @@ export const homeObjTwo = {
 export const homeObjThree = {
     id: 'signup',
     background: 'bg-primary-content',
-    fontcolor: 'text-neutral',
+    fontcolor: 'text-base-100',
     topLine: 'JOIN OUR COMMUNITY',
     topLineColor: 'text-primary',
     headline: 'Creating your account is super easy',
