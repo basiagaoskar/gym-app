@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import PasswordVisibilityButton from '../components/PasswordVisibilityButton'
 import Logo from '../components/Logo';
+import { useAuthStore } from '../store/useAuthStore';
+import { Loader2 } from 'lucide-react';
+
 function SignUpPage() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [formData, setFormData] = useState({
@@ -9,13 +12,15 @@ function SignUpPage() {
         password: ''
     })
 
+    const { signup, isSigningUp } = useAuthStore()
+
     const toggleVisibility = () => {
         setPasswordVisible(!passwordVisible)
     }
 
     function handleSubmit(e) {
         e.preventDefault()
-        console.log(formData)
+        signup(formData)
     }
 
     return (
@@ -77,10 +82,15 @@ function SignUpPage() {
                                 <br />At least one uppercase letter
                             </p>
 
-
-
                             <button className='btn w-full bg-primary text-primary-content text-xl sm:text-2xl p-4 sm:p-6 mt-20 rounded-xl'>
-                                Continue
+                                {isSigningUp ? (
+                                    <>
+                                        <Loader2 className="size-5 animate-spin" />
+                                        Loading...
+                                    </>
+                                ) : (
+                                    "Create Account"
+                                )}
                             </button>
                         </div>
                     </form>

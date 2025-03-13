@@ -7,11 +7,12 @@ import { useThemeStore } from './store/useThemeStore';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const { theme } = useThemeStore();
 
-  const loggedIn = true;
+  const loggedIn = false;
 
   return (
     <>
@@ -24,6 +25,8 @@ function App() {
           <Route path="/settings" element={loggedIn ? <SettingsPage /> : <Navigate to="/" />} />
           <Route path="/start" element={<StartPage />} />
         </Routes >
+
+        <Toaster />
       </div>
     </>
   )
