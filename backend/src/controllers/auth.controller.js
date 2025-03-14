@@ -2,6 +2,15 @@ import bcrypt from "bcryptjs"
 import User from "../models/user.model.js"
 import { generateToken } from "../lib/utils.js"
 
+export const checkAuth = (req, res) => {
+    try {
+        res.status(200).json(req.user)
+    } catch (error) {
+        console.log("Error in checkAuth constroller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
 export const signup = async (req, res) => {
     const { username, email, password } = req.body
     try {

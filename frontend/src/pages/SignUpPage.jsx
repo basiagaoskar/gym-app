@@ -68,6 +68,7 @@ function SignUpPage() {
                                     className='text-neutral'
                                     value={formData.password}
                                     required
+                                    autoComplete="on"
                                     placeholder="Password"
                                     minLength="8"
                                     pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Logo from '../components/Logo'
 import PasswordVisibilityButton from '../components/PasswordVisibilityButton';
+import { useAuthStore } from '../store/useAuthStore';
+import { Loader2 } from 'lucide-react';
 
 function LoginPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -9,13 +11,15 @@ function LoginPage() {
     password: ''
   })
 
+  const {isLoggingIn, login } = useAuthStore()
+
   const toggleVisibility = () => {
     setPasswordVisible(!passwordVisible)
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    console.log(formData)
+    login(formData)
   }
 
   return (
@@ -47,6 +51,7 @@ function LoginPage() {
                   type={passwordVisible ? 'text' : 'password'} className='text-neutral'
                   value={formData.password}
                   required
+                  autoComplete="on"
                   placeholder="Password"
                   minLength="8"
                   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
@@ -65,7 +70,14 @@ function LoginPage() {
               </a>
 
               <button className='btn w-full bg-primary text-primary-content text-3xl p-7 mt-15 rounded-xl'>
-                Continue
+                {isLoggingIn ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  "Sign in"
+                  )}
               </button>
             </div>
           </form>

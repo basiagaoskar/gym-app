@@ -2,12 +2,16 @@ import { LogOut, Settings, User } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import { useAuthStore } from '../store/useAuthStore'
+
 const menuItems = [
     { text: "profile", icon: User },
     { text: "settings", icon: Settings },
 ]
 
 function LoggedInNavbar() {
+    const { logout } = useAuthStore()
+
     return (
         <>
             <nav className='bg-neutral w-full min-h-[calc(6vh)] px-8 py-4 flex justify-center items-center sticky top-0 z-50'>
@@ -21,20 +25,20 @@ function LoggedInNavbar() {
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
-                                    <img alt="Profile picture" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                    <img alt="Profile picture" src="/images/avatar.png" />
                                 </div>
                             </div>
                             <ul className="menu menu-sm dropdown-content bg-base-100 text-2xl rounded-box z-1 mt-3 w-52 p-2 shadow">
                                 {menuItems.map((section) => (
                                     <li key={section.text}>
-                                        <Link to={"/" + section.text} className="hover:bg-primary-content text-base hover:text-primary-100">
+                                        <Link to={"/" + section.text} className="hover:bg-base-300 text-base ">
                                             <section.icon className='size-5' />
                                             {section.text.charAt(0).toUpperCase() + section.text.slice(1)}
                                         </Link>
                                     </li>
                                 ))}
                                 <li>
-                                    <button className='hover:bg-primary-content text-base hover:text-primary-100'>
+                                    <button className='hover:bg-base-300 text-base hover:text-primary-100' onClick={logout}>
                                         <LogOut className='size-5' />
                                         Logout
                                     </button>

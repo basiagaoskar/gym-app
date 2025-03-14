@@ -31,7 +31,7 @@ export const homeObjTwo = {
 };
 
 export const homeObjThree = {
-    id: 'signup',
+    id: 'sign up',
     background: 'bg-primary-content',
     fontcolor: 'text-base-100',
     topLine: 'JOIN OUR COMMUNITY',

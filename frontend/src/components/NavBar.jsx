@@ -48,7 +48,7 @@ function NavBar() {
 
                     {/* Bigger devices menu */}
                     <ul className='hidden xl:flex gap-12'>
-                        {["about", "discover", "services", "signup"].map((section) => (
+                        {["about", "discover", "services", "sign up"].map((section) => (
                             <li key={section}>
                                 <ScrollLink
                                     to={section}
