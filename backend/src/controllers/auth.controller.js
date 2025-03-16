@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs"
 import User from "../models/user.model.js"
 import { generateToken } from "../lib/utils.js"
+import cloudinary from "../lib/cloudinary.js"
 
 export const checkAuth = (req, res) => {
     try {
@@ -98,6 +99,54 @@ export const logout = (req, res) => {
         res.status(200).json({ message: "Logged out successfully" })
     } catch (error) {
         console.log("Error in the logout controller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { username, profilePic, bio } = req.body
+        const userId = req.user._id
+
+        const existingUser = await User.findById(userId)
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        let newUsername = existingUser.username
+        if (username) {
+            if (!/^[a-zA-Z0-9-]{3,30}$/.test(username)) {
+                return res.status(400).json({ message: "Username must be 3 to 30 characters containing only letters, numbers, or dashes" })
+            }
+
+            const usernameExists = await User.findOne({ username })
+            if (usernameExists && usernameExists._id.toString() !== userId.toString()) {
+                return res.status(400).json({ message: "Username is already taken" })
+            }
+            newUsername = username
+        }
+        
+        let newBio = bio ? bio.trim() : ""
+        if (newBio.length > 200) {
+            return res.status(400).json({ message: "Bio must be 200 characters or less" })
+        }
+
+        let newProfilePic = profilePic || existingUser.profilePic
+
+        if (profilePic) {
+            const uploadResponse = await cloudinary.uploader.upload(profilePic);
+            newProfilePic = uploadResponse.secure_url;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { username: newUsername, profilePic: newProfilePic, bio: newBio },
+            { new: true }
+        );
+
+        res.status(200).json(updatedUser)
+    } catch (error) {
+        console.log("Error in the updateProfile controller", error.message)
         res.status(500).json({ message: "Internal Server Error" })
     }
 }

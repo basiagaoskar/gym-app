@@ -11,10 +11,10 @@ const menuItems = [
 
 function LoggedInNavbar() {
     const { logout } = useAuthStore()
-
+    
     return (
         <>
-            <nav className='bg-neutral w-full min-h-[calc(6vh)] px-8 py-4 flex justify-center items-center sticky top-0 z-50'>
+            <nav className='bg-neutral w-full min-h-[calc(6vh)] px-8 py-4 flex justify-center items-center fixed top-0 z-50'>
                 <div className='w-full text-xl flex justify-between items-center container mx-auto'>
                     <Link to="/" >
                         <h1 className='text-neutral-content font-bold text-2xl md:text-3xl lg:text-4xl cursor-pointer'>Ziutki Gym</h1>
