@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import UserProfilePage from './pages/UserProfilePage';
 
 import { useThemeStore } from './store/useThemeStore';
 import { useAuthStore } from './store/useAuthStore';
@@ -39,6 +40,8 @@ function App() {
           <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
           <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
+
+          <Route path="/user/:username" element={authUser ? <UserProfilePage /> : <Navigate to="/login" />} />
         </Routes >
 
         <Toaster />

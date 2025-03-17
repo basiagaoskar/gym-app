@@ -7,7 +7,7 @@ export const checkAuth = (req, res) => {
     try {
         res.status(200).json(req.user)
     } catch (error) {
-        console.log("Error in checkAuth constroller", error.message)
+        console.log("Error in checkAuth controller", error.message)
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
@@ -125,7 +125,7 @@ export const updateProfile = async (req, res) => {
             }
             newUsername = username
         }
-        
+
         let newBio = bio ? bio.trim() : ""
         if (newBio.length > 200) {
             return res.status(400).json({ message: "Bio must be 200 characters or less" })
@@ -147,6 +147,24 @@ export const updateProfile = async (req, res) => {
         res.status(200).json(updatedUser)
     } catch (error) {
         console.log("Error in the updateProfile controller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const findUser = async (req, res) => {
+    const { username } = req.params
+    try {
+        const foundUser = await User.findOne({ username }).select('-password')
+        if (!foundUser) {
+            return res.status(200).json({
+                username: "-",
+                email: "-",
+                bio: ""
+            })
+        }
+        res.status(200).json(foundUser)
+    } catch (error) {
+        console.log("Error in findUser controller", error.message)
         res.status(500).json({ message: "Internal Server Error" })
     }
 }

@@ -9,6 +9,8 @@ export const useAuthStore = create((set) => ({
     isSigningUp: false,
     isLoggingIn: false,
     isUpdatingProfile: false,
+    Profile: null,
+    isSearchingProfile: true,
 
     checkAuth: async () => {
         try {
@@ -69,5 +71,17 @@ export const useAuthStore = create((set) => ({
         } finally {
             set({ isUpdatingProfile: false })
         }
-    }
+    },
+
+    findUser: async (username) => {
+        try {
+            const res = await axiosInstance.get(`/auth/user/${username}`)
+            set({ Profile: res.data })
+        } catch (error) {
+            console.log("Error in findUser: ", error)
+            set({ Profile: null })
+        } finally {
+            set({ isSearchingProfile: false })
+        }
+    },
 }))

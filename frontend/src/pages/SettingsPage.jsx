@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { ArrowLeft, Camera, CircleHelp, Lock, Mail, Palette, Pen, ReceiptText, User, UserPen } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
+import { ArrowLeft, Camera, CircleHelp, Lock, Mail, Palette, Pen, ReceiptText, Settings, User, UserPen } from 'lucide-react'
 
 import LoggedInNavbar from '../components/LoggedInNavbar'
 import { THEMES } from '../constants'
@@ -18,13 +19,18 @@ function SettingsPage() {
     const { authUser, isUpdatingProfile, updateProfile } = useAuthStore()
     const { theme, setTheme } = useThemeStore()
 
-    const [activeTab, setActiveTab] = useState("profile")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const activeTab = searchParams.get("tab") || "profile"; // Domyślnie "profile"
     const [selectedImg, setSelectedImg] = useState(null)
     const [formData, setFormData] = useState({
         username: '',
         profilePic: '',
         bio: '',
     })
+
+    const handleTabChange = (tab) => {
+        setSearchParams({ tab });
+    }
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0]
@@ -55,13 +61,13 @@ function SettingsPage() {
                     <div className="flex flex-col md:flex-row gap-8">
 
                         {/* Mobile sidebar */}
-                        {activeTab === null && (
+                        {activeTab === 'null' && (
                             <div className="w-full md:hidden flex flex-col gap-3">
                                 {settingsOptions.map((option) => (
                                     <button
                                         key={option.text}
                                         className="flex items-center justify-between p-3 text-base font-normal bg-base-100 rounded-lg transition cursor-pointer hover:bg-base-200"
-                                        onClick={() => setActiveTab(option.text)}
+                                        onClick={() => handleTabChange(option.text)}
                                     >
                                         <div className="flex items-center gap-3">
                                             <option.icon className="w-5 h-5" />
@@ -78,8 +84,8 @@ function SettingsPage() {
                                 {settingsOptions.map((option) => (
                                     <li key={option.text}>
                                         <button
-                                            className={`flex items-center w-full p-3 text-base font-normal rounded-lg transition cursor-pointer ${activeTab === option.text ? "bg-secondary text-neutral-content" : "bg-base-100 hover:bg-base-200"}`}
-                                            onClick={() => setActiveTab(option.text)}
+                                            className={`flex items-center w-40 p-3 text-base font-normal rounded-lg transition cursor-pointer ${activeTab === option.text ? "bg-secondary text-neutral-content" : "bg-base-100 hover:bg-base-200"}`}
+                                            onClick={() => handleTabChange(option.text)}
                                         >
                                             <option.icon className="w-5 h-5 mr-3" />
                                             <span className="capitalize">{option.text}</span>
@@ -88,13 +94,19 @@ function SettingsPage() {
                                 ))}
                             </ul>
                         </aside>
+                        {activeTab === 'null' && (
+                            <div className="hidden md:flex flex-col items-center justify-center w-full h-[calc(100vh-50vh)] text-center">
+                                <Settings className="w-70 h-70 text-neutral" />
+                                <p className="text-2xl text-neutral mt-10">Select an option from the left menu</p>
+                            </div>
+                        )}
 
                         {/* Mobile: Widok szczegółowy */}
-                        {activeTab !== null && (
+                        {activeTab !== 'null' && (
                             <div className="w-full md:w-3/4">
                                 <button
                                     className="mb-4 flex items-center gap-2 text-lg font-medium md:hidden"
-                                    onClick={() => setActiveTab(null)}
+                                    onClick={() => handleTabChange(null)}
                                 >
                                     <ArrowLeft className="w-5 h-5" />
                                     Back
