@@ -11,7 +11,7 @@ function LoginPage() {
     password: ''
   })
 
-  const {isLoggingIn, login } = useAuthStore()
+  const { isLoggingIn, login } = useAuthStore()
 
   const toggleVisibility = () => {
     setPasswordVisible(!passwordVisible)
@@ -69,7 +69,7 @@ function LoginPage() {
                 Forgot password?
               </a>
 
-              <button className='btn w-full bg-primary text-primary-content text-3xl p-7 mt-15 rounded-xl'>
+              <button className='btn w-full bg-primary text-primary-content text-3xl p-7 mt-15 rounded-xl' disabled={isLoggingIn}>
                 {isLoggingIn ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -77,7 +77,7 @@ function LoginPage() {
                   </>
                 ) : (
                   "Sign in"
-                  )}
+                )}
               </button>
             </div>
           </form>

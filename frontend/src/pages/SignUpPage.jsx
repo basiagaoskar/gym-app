@@ -83,7 +83,7 @@ function SignUpPage() {
                                 <br />At least one uppercase letter
                             </p>
 
-                            <button className='btn w-full bg-primary text-primary-content text-xl sm:text-2xl p-4 sm:p-6 mt-20 rounded-xl'>
+                            <button className='btn w-full bg-primary text-primary-content text-xl sm:text-2xl p-4 sm:p-6 mt-20 rounded-xl' disabled={isLoggingIn}>
                                 {isSigningUp ? (
                                     <>
                                         <Loader2 className="size-5 animate-spin" />
