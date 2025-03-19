@@ -1,17 +1,19 @@
 import { LogOut, Settings, User } from 'lucide-react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuthStore } from '../store/useAuthStore'
 
-const menuItems = [
-    { text: "profile", icon: User },
-    { text: "settings", icon: Settings },
-]
-
 function LoggedInNavbar() {
-    const { logout } = useAuthStore()
-    
+    const { authUser, logout } = useAuthStore()
+
+    const menuItems = [
+        { text: "profile", link: `user/${authUser?.username}`, icon: User },
+        { text: "settings", link: "settings", icon: Settings },
+    ]
+
+    const navigate = useNavigate()
+
     return (
         <>
             <nav className='bg-neutral w-full min-h-[calc(6vh)] px-8 py-4 flex justify-center items-center fixed top-0 z-50'>
@@ -25,16 +27,20 @@ function LoggedInNavbar() {
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
-                                    <img alt="Profile picture" src="/images/avatar.png" />
+                                    <img alt="Profile picture" src={authUser.profilePic || "/images/avatar.png"} />
                                 </div>
                             </div>
                             <ul className="menu menu-sm dropdown-content bg-base-100 text-2xl rounded-box z-1 mt-3 w-52 p-2 shadow">
                                 {menuItems.map((section) => (
                                     <li key={section.text}>
-                                        <Link to={"/" + section.text} className="hover:bg-base-300 text-base ">
-                                            <section.icon className='size-5' />
-                                            {section.text.charAt(0).toUpperCase() + section.text.slice(1)}
-                                        </Link>
+                                        <button
+                                            onClick={() => navigate(`/${section.link}`)}
+                                            className="capitalize hover:bg-base-300 text-base"
+                                        >
+                                            <section.icon className="size-5" />
+                                            {section.text}
+                                        </button>
+
                                     </li>
                                 ))}
                                 <li>

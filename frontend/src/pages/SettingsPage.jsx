@@ -55,10 +55,10 @@ function SettingsPage() {
         <>
             <LoggedInNavbar />
             <div className="min-h-screen bg-primary text-base-content flex items-center justify-center">
-                <div className="m-3 p-5 md:p-10 bg-base-300 rounded-lg shadow-lg flex flex-col gap-6 w-full max-w-5xl my-auto h-190 md:h-200">
+                <div className="m-3 p-5 md:p-10 bg-base-300 rounded-lg shadow-lg flex flex-col gap-6 w-full max-w-7xl my-auto h-190 md:h-210">
                     <h1 className="text-4xl font-bold">Settings</h1>
 
-                    <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex flex-col md:flex-row gap-16">
 
                         {/* Mobile sidebar */}
                         {activeTab === 'null' && (
@@ -103,7 +103,7 @@ function SettingsPage() {
 
                         {/* Mobile: Widok szczegółowy */}
                         {activeTab !== 'null' && (
-                            <div className="w-full md:w-3/4">
+                            <div className="w-full md:w-7/10">
                                 <button
                                     className="mb-4 flex items-center gap-2 text-lg font-medium md:hidden"
                                     onClick={() => handleTabChange(null)}
@@ -198,7 +198,7 @@ function SettingsPage() {
 
                                         {/* Mobile */}
                                         <div className="md:hidden mt-3">
-                                            <select className="select w-full font-semibold capitalize" value={theme} onChange={(e) => setTheme(e.target.value)}>
+                                            <select className="select w-30 font-semibold capitalize" value={theme} onChange={(e) => setTheme(e.target.value)}>
                                                 {THEMES.map((t) => (
                                                     <option key={t} value={t}>
                                                         {t}

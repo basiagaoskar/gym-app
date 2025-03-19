@@ -20,7 +20,6 @@ export const THEMES = [
     "luxury",
     "dracula",
     "cmyk",
-    "autumn",
     "business",
     "acid",
     "lemonade",
