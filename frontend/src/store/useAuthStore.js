@@ -9,6 +9,7 @@ export const useAuthStore = create((set) => ({
     isSigningUp: false,
     isLoggingIn: false,
     isUpdatingProfile: false,
+    isUpdatingPassword: false,
     profile: null,
     isSearchingProfile: true,
 
@@ -70,6 +71,29 @@ export const useAuthStore = create((set) => ({
             toast.error(error.response.data.message)
         } finally {
             set({ isUpdatingProfile: false })
+        }
+    },
+
+    updatePassword: async (data) => {
+        set({ isUpdatingPassword: true })
+        try {
+            const res = await axiosInstance.put("/auth/update-password", data)
+            set({ authUser: res.data })
+            toast.success("Password updated successfully")
+        } catch (error) {
+            toast.error(error.response.data.message)
+        } finally {
+            set({ isUpdatingPassword: false })
+        }
+    },
+
+    deleteAccount: async () => {
+        try {
+            const res = await axiosInstance.delete("/auth/delete-account")
+            set({ authUser: null })
+            toast.success("Account deleted successfully")
+        } catch (error) {
+            toast.error(error.response.data.message)
         }
     },
 

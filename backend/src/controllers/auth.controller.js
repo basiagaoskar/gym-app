@@ -151,9 +151,52 @@ export const updateProfile = async (req, res) => {
     }
 }
 
-export const findUser = async (req, res) => {
-    const { username } = req.params
+export const updatePassword = async (req, res) => {
     try {
+        const { currentPassword, newPassword } = req.body
+        const userId = req.user._id
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password)
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: "Invalid Credentials" })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(newPassword, salt)
+
+        const updatedUser = await User.findByIdAndUpdate(userId, { password: hashedPassword })
+        res.status(200).json(updatedUser)
+
+    } catch (error) {
+        console.log("Error in the updatePassword controller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+
+        await User.findByIdAndDelete(userId)
+        res.status(200).json({ message: "Account deleted successfully" })
+    } catch (error) {
+        console.log("Error in deleteAccount controller", error.message)
+        res.status(500).json({ message: "Internal Server Error" })
+    }
+}
+
+export const findUser = async (req, res) => {
+    try {
+        const { username } = req.params
         const foundUser = await User.findOne({ username }).select('-password')
         if (!foundUser) {
             return res.status(200).json({

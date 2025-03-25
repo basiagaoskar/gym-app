@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Camera, CircleHelp, Lock, Mail, Palette, Pen, ReceiptText, Settings, User, UserPen } from 'lucide-react'
+import { toast } from "react-hot-toast"
 
 import LoggedInNavbar from '../components/LoggedInNavbar'
 import { THEMES } from '../constants'
@@ -16,16 +17,22 @@ const settingsOptions = [
 ]
 
 function SettingsPage() {
-    const { authUser, isUpdatingProfile, updateProfile } = useAuthStore()
+    const { authUser, isUpdatingProfile, updateProfile, isUpdatingPassword, updatePassword, deleteAccount } = useAuthStore()
     const { theme, setTheme } = useThemeStore()
 
     const [searchParams, setSearchParams] = useSearchParams()
-    const activeTab = searchParams.get("tab") || "profile"; // Domyślnie "profile"
+    const activeTab = searchParams.get("tab") || "profile"
     const [selectedImg, setSelectedImg] = useState(null)
     const [formData, setFormData] = useState({
         username: '',
         profilePic: '',
         bio: '',
+    })
+
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
     })
 
     const handleTabChange = (tab) => {
@@ -51,6 +58,23 @@ function SettingsPage() {
         updateProfile(formData)
     }
 
+    const validatePassword = () => {
+        const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+
+        if (!passwordData.currentPassword) return toast.error("Password is required");
+        if (!passwordPattern.test(passwordData.newPassword)) return toast.error("New password must be at least 8 characters, including number, lowercase letter, uppercase letter");
+        if (passwordData.newPassword != passwordData.confirmNewPassword) return toast.error("Passwords do not match");
+
+        return true
+    }
+
+    function handlePasswordSubmit(e) {
+        e.preventDefault()
+        console.log(passwordData)
+
+        const success = validatePassword()
+        if (success === true) updatePassword(passwordData)
+    }
     return (
         <>
             <LoggedInNavbar />
@@ -205,6 +229,62 @@ function SettingsPage() {
                                                     </option>
                                                 ))}
                                             </select>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Subscription */}
+                                {activeTab === "subscription" && (
+                                    <>
+                                        <h2 className="text-xl font-bold">Subscription Settings</h2>
+                                        <p className="text-sm text-base-content">Manage your subscription details here.</p>
+                                        <div className="mt-4">
+                                            <p className="text-base-content">Current Plan: <strong>Premium</strong></p>
+                                            <p className="text-base-content">Next Billing Date: <strong>01-01-2025</strong></p>
+                                            <button className="btn btn-primary mt-4 mr-5">Upgrade Plan</button>
+                                            <button className="btn btn-secondary mt-4 ">Cancel Subscription</button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Security */}
+                                {activeTab === "security" && (
+                                    <>
+                                        <h2 className="text-xl font-bold">Security Settings</h2>
+                                        <p className="text-sm text-base-content">Manage your security settings here.</p>
+                                        <div className="mt-4">
+                                            <label className="text-sm font-bold flex items-center gap-2">
+                                                <Lock className="w-4 h-4" />
+                                                Change Password
+                                            </label>
+                                            <form onSubmit={handlePasswordSubmit}>
+                                                <input type="password" placeholder="Current Password" autoComplete='current-password' className="input mt-1 input-bordered w-full" onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} />
+                                                <input type="password" placeholder="New Password" autoComplete="off" className="input mt-1 input-bordered w-full" onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} />
+                                                <input type="password" placeholder="Confirm New Password" autoComplete='off' className="input mt-1 input-bordered w-full" onChange={(e) => setPasswordData({ ...passwordData, confirmNewPassword: e.target.value })} />
+                                                <button className="btn btn-primary mt-4" disabled={isUpdatingPassword}>Update Password</button>
+                                            </form>
+                                        </div>
+                                        <div className="mt-14">
+                                            <h3 className="text-lg font-bold text-error">Delete Account</h3>
+                                            <p className="text-sm text-base-content">Permanently delete your account. This action cannot be undone.</p>
+                                            <button className="btn btn-error mt-3" onClick={deleteAccount}>Delete Account</button>
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* Support */}
+                                {activeTab === "support" && (
+                                    <>
+                                        <h2 className="text-xl font-bold">Support</h2>
+                                        <p className="text-sm text-base-content">Need help? Contact our support team.</p>
+                                        <div className="mt-4">
+                                            <label className="text-sm font-bold flex items-center gap-2">
+                                                <Mail className="w-4 h-4" />
+                                                Email Support
+                                            </label>
+                                            <input type="text" value={authUser.email} className="input mt-1 input-bordered w-full cursor-not-allowed" readOnly />
+                                            <textarea className="textarea textarea-bordered mt-1 w-full" placeholder="Describe your issue"></textarea>
+                                            <button className="btn btn-primary mt-4">Send Message</button>
                                         </div>
                                     </>
                                 )}
