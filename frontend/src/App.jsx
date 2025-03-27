@@ -13,6 +13,7 @@ import SettingsPage from './pages/SettingsPage';
 import { useThemeStore } from './store/useThemeStore';
 import { useAuthStore } from './store/useAuthStore';
 import NotFoundPage from './pages/NotFoundPage';
+import CurrentWorkoutPage from './pages/CurrentWorkout';
 
 function App() {
   const { theme } = useThemeStore();
@@ -40,7 +41,8 @@ function App() {
           <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
           <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
           <Route path="/user/:username" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-
+          <Route path="/current-workout" element={authUser ? <CurrentWorkoutPage /> : <Navigate to="/login" />} />
+          
           <Route path="*" element={<NotFoundPage />} />
         </Routes >
 
