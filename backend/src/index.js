@@ -5,6 +5,7 @@ import cookierParser from "cookie-parser"
 
 import authRoutes from './routes/auth.route.js';
 import exerciseRoutes from './routes/exercise.route.js';
+import workoutRoutes from './routes/workout.route.js';
 
 import { connectDB } from './lib/db.js';
 
@@ -23,6 +24,7 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes);
 app.use("/api/exercise", exerciseRoutes);
+app.use("/api/workout", workoutRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

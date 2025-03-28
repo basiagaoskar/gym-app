@@ -40,7 +40,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
             set((state) => {
                 const updatedWorkout = {
                     ...state.currentWorkout,
-                    exercises: [...state.currentWorkout.exercises, exercise],
+                    exercises: [...state.currentWorkout.exercises, { ...exercise, sets: [] }]
                 };
                 localStorage.setItem("currentWorkout", JSON.stringify(updatedWorkout));
 
@@ -53,14 +53,42 @@ export const useCurrentWorkoutStore = create((set, get) => ({
         }
     },
 
+    addSetToExercise: (exerciseId, newSet) => {
+        set((state) => {
+            const updatedExercises = state.currentWorkout.exercises.map((exercise) => {
+                if (exercise._id === exerciseId) {
+                    return {
+                        ...exercise,
+                        sets: [...(exercise.sets || []), newSet],
+                    };
+                }
+                return exercise
+            })
+
+            const updatedWorkout = {
+                ...state.currentWorkout,
+                exercises: updatedExercises,
+            }
+
+            localStorage.setItem("currentWorkout", JSON.stringify(updatedWorkout))
+            return { currentWorkout: updatedWorkout }
+        });
+    },
+
     endWorkout: async () => {
+        const { currentWorkout } = get()
+        const workoutToSave = {
+            ...currentWorkout,
+            exercises: currentWorkout.exercises.map((exercise) => ({
+                exercise: exercise._id,
+                sets: exercise.sets,
+            })),
+            startTime: currentWorkout.startTime,
+            endTime: new Date(),
+        }
 
-        console.log("Workout after reset:", get().currentWorkout);
-
-        const { currentWorkout } = get();
-        console.log("Current workout before saving:", currentWorkout)
         try {
-            //await axiosInstance.post("/workouts", currentWorkout);
+            const response = await axiosInstance.post("/workout/save-workout", workoutToSave)
             toast.success("Workout saved successfully!");
         } catch (error) {
             toast.error(error.response.data.message);
@@ -70,7 +98,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
                 startTime: null,
             };
 
-            set({ currentWorkout: resetWorkout }); 
+            set({ currentWorkout: resetWorkout });
             localStorage.removeItem("currentWorkout")
         }
     },
