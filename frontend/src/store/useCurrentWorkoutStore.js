@@ -46,21 +46,35 @@ export const useCurrentWorkoutStore = create((set, get) => ({
 
                 return { currentWorkout: updatedWorkout };
             });
-
-            toast.success("Exercise added successfully!");
         } catch (error) {
             toast.error(error.response.data.message);
         }
     },
+    
+    removeExercise: (exerciseId) => {
+        set((state) => {
+            const updatedWorkout = {
+                ...state.currentWorkout,
+                exercises: state.currentWorkout.exercises.filter(
+                    (exercise) => exercise._id !== exerciseId
+                ),
+            };
+            localStorage.setItem("currentWorkout", JSON.stringify(updatedWorkout));
+    
+            return { currentWorkout: updatedWorkout };
+        });
+    },
 
-    addSetToExercise: (exerciseId, newSet) => {
+    addSetToExercise: (exerciseId, setIndex, field, value) => {
         set((state) => {
             const updatedExercises = state.currentWorkout.exercises.map((exercise) => {
                 if (exercise._id === exerciseId) {
-                    return {
-                        ...exercise,
-                        sets: [...(exercise.sets || []), newSet],
-                    };
+                    const updatedSets = setIndex !== null
+                        ? exercise.sets.map((set, index) =>
+                            index === setIndex ? { ...set, [field]: value } : set
+                        )
+                        : [...exercise.sets, { weight: "", reps: "" }];
+                    return { ...exercise, sets: updatedSets }
                 }
                 return exercise
             })
@@ -90,6 +104,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
         try {
             const response = await axiosInstance.post("/workout/save-workout", workoutToSave)
             toast.success("Workout saved successfully!");
+            return response.data
         } catch (error) {
             toast.error(error.response.data.message);
         } finally {
