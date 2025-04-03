@@ -1,4 +1,4 @@
-import { LogOut, Settings, User } from 'lucide-react'
+import { Dumbbell, House, LogOut, Settings, User } from 'lucide-react'
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -8,7 +8,9 @@ function LoggedInNavbar() {
     const { authUser, logout } = useAuthStore()
 
     const menuItems = [
+        { text: "home", link: " ", icon: House },
         { text: "profile", link: `user/${authUser?.username}`, icon: User },
+        { text: "routines", link: "routines", icon: Dumbbell },
         { text: "settings", link: "settings", icon: Settings },
     ]
 

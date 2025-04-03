@@ -38,7 +38,7 @@ const workoutSchema = new mongoose.Schema(
             type: Number,
             default: null,
         },
-        notes: {
+        title: {
             type: String,
             default: "",
         },

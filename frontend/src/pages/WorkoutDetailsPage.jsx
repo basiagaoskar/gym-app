@@ -1,59 +1,72 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useWorkoutStore } from "../store/useWorkoutStore";
+import LoggedInNavbar from "../components/LoggedInNavbar";
 
 const WorkoutDetailsPage = () => {
     const { workoutId } = useParams();
     const { workout, getWorkout } = useWorkoutStore();
     useEffect(() => {
-        getWorkout(workoutId)
+        if (workoutId) {
+            getWorkout(workoutId)
+        }
     }, [workoutId])
-    console.log(workout)
 
     return (
-        <div className="min-h-screen bg-primary text-base-content flex items-center justify-center">
-            <div className="w-full max-w-7xl min-h-250 bg-base-300 text-base-content p-4 rounded-lg shadow-lg">
-                <h1 className="text-4xl font-bold mb-4">Workout Details</h1>
-                {workout && workout.exercises ? (
+        <div className="min-h-screen bg-base-200 text-base-content pt-20 pb-10">
+            <LoggedInNavbar />
+            <div className="container mx-auto max-w-5xl bg-base-300 text-base-content p-6 md:p-8 rounded-lg shadow-lg">
+
+                {workout && workout._id === workoutId && workout.exercises ? (
                     <>
-                        <p className="text-sm mb-4 text-gray-500">
-                            Date: {new Date(workout.startTime).toLocaleString()}
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2">{workout.title || "Workout Details"}</h1>
+                        <p className="text-sm mb-6 text-base-content/70">
+                            Date: {new Date(workout.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                         </p>
-                        <h2 className="text-2xl font-bold mb-4">Exercises</h2>
-                        {workout.exercises.length > 0 ? (
-                            <ul className="space-y-4 max-h-190 overflow-y-auto">
-                                {workout.exercises.map((exercise, index) => (
-                                    <li key={index} className="p-4 border rounded-lg shadow-lg bg-base-100">
-                                        <div className="flex gap-5">
-                                            <div className="avatar">
-                                                <div className="w-20 rounded-full">
-                                                    <img src={exercise.exercise.video_url} alt={exercise.exercise.title} />
+
+                        <h2 className="text-2xl font-semibold mb-4 border-b border-base-content/10 pb-2">Exercises</h2>
+                        {workout.exercises.length > 0 && (
+                            <ul className="space-y-6">
+                                {workout.exercises.map((exerciseData) => (
+                                    <li key={exerciseData._id || exerciseData.exercise._id} className="p-4 rounded-lg shadow-md bg-base-100">
+                                        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
+                                            <div className="avatar flex-shrink-0">
+                                                <div className="w-24 h-24 rounded-lg bg-base-200 flex items-center justify-center">
+                                                    <img src={exerciseData.exercise.video_url} alt={exerciseData.exercise.title} className="object-cover w-full h-full" />
                                                 </div>
                                             </div>
-                                            <div>
-                                                <h3 className="text-3xl font-bold">{exercise.exercise.title}</h3>
-                                                <p className="text-sm">
-                                                    Primary Muscle: {exercise.exercise.muscle_groups.primary}
+                                            <div className="flex-grow">
+                                                <h3 className="text-xl md:text-2xl font-bold">{exerciseData.exercise.title}</h3>
+                                                <p className="text-sm text-base-content/70 mt-1 capitalize">
+                                                    Primary Muscle: {exerciseData.exercise.muscle_groups.primary}
+                                                    {Array.isArray(exerciseData.exercise.muscle_groups.secondary) && exerciseData.exercise.muscle_groups.secondary.length > 0 && (
+                                                        <span className="ml-2">
+                                                            | Secondary: {exerciseData.exercise.muscle_groups.secondary.join(', ')}
+                                                        </span>
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
-                                        <h5 className="font-semibold mt-2">Sets:</h5>
-                                        <ul>
-                                            {exercise.sets.map((set, setIndex) => (
-                                                <li key={setIndex} className="">
-                                                    <span> {set.weight}kg x {set.reps}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div className="mt-4 pl-0 sm:pl-[calc(6rem+1.5rem)]">
+                                            <h4 className="font-semibold mb-2 text-base">Sets:</h4>
+                                            <ul className="space-y-1 text-sm">
+                                                {exerciseData.sets.map((set, setIndex) => (
+                                                    <li key={set._id} className="flex justify-between items-center p-1.5 rounded bg-base-200">
+                                                        <span className="font-mono text-base-content/80">Set {setIndex + 1}:</span>
+                                                        <span className="font-medium">{set.weight}kg x {set.reps} reps</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
-                        ) : (
-                            <p className="text-sm text-gray-500">No exercises found for this workout.</p>
                         )}
                     </>
                 ) : (
-                    <p className="text-sm text-gray-500">Loading workout details...</p>
+                    <p className="text-base-content text-center py-15">
+                        Workout details not found or failed to load.
+                    </p>
                 )}
             </div>
         </div>

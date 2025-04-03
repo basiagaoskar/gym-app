@@ -10,8 +10,11 @@ export const useAuthStore = create((set) => ({
     isLoggingIn: false,
     isUpdatingProfile: false,
     isUpdatingPassword: false,
+    
     profile: null,
     isSearchingProfile: true,
+    profileWorkouts: [],
+    isLoadingProfileWorkouts: true,
 
     checkAuth: async () => {
         try {
@@ -107,5 +110,20 @@ export const useAuthStore = create((set) => ({
         } finally {
             set({ isSearchingProfile: false })
         }
+    },
+    
+    fetchProfileWorkouts: async (userId) => {
+        if (!userId) return;
+        set({ profileWorkouts: [], isLoadingProfileWorkouts: true })
+        try {
+            const res = await axiosInstance.get(`/workout/user/${userId}`)
+            set({ profileWorkouts: res.data })
+        } catch (error) {
+            toast.error(error.response.data.message)
+            set({ profileWorkouts: [] })
+        } finally {
+            set({ isLoadingProfileWorkouts: false })
+        }
+
     },
 }))

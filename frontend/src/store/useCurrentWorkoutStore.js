@@ -7,6 +7,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
         JSON.parse(localStorage.getItem("currentWorkout")) || {
             exercises: [],
             startTime: null,
+            title: "",
         },
     exercises: [],
 
@@ -20,11 +21,24 @@ export const useCurrentWorkoutStore = create((set, get) => ({
         const newWorkout = {
             exercises: [],
             startTime: new Date(),
+            title: "",
+
         };
 
         set({ currentWorkout: newWorkout });
         localStorage.setItem("currentWorkout", JSON.stringify(newWorkout));
     },
+
+    updateWorkoutTitle: (title) => {
+        set((state) => {
+           const updatedWorkout = {
+               ...state.currentWorkout,
+               title: title,
+           };
+           localStorage.setItem("currentWorkout", JSON.stringify(updatedWorkout))
+           return { currentWorkout: updatedWorkout };
+       });
+   },
 
     getExercises: async () => {
         try {
@@ -99,6 +113,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
             })),
             startTime: currentWorkout.startTime,
             endTime: new Date(),
+            title: currentWorkout.title || "Untitled Workout",
         }
 
         try {
@@ -111,6 +126,7 @@ export const useCurrentWorkoutStore = create((set, get) => ({
             const resetWorkout = {
                 exercises: [],
                 startTime: null,
+                title: "",
             };
 
             set({ currentWorkout: resetWorkout });

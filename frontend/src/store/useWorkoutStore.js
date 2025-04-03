@@ -7,7 +7,6 @@ export const useWorkoutStore = create((set) => ({
 
     getWorkout: async (workoutId) => {
         try {
-            console.log(workoutId)
             const res = await axiosInstance.get(`/workout/${workoutId}`);
             set({ workout: res.data });
         } catch (error) {

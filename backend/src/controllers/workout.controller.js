@@ -2,8 +2,7 @@ import Workout from "../models/workout.model.js";
 import mongoose from "mongoose";
 
 export const addWorkout = async (req, res) => {
-    const { exercises, startTime, endTime, notes } = req.body;
-
+    const { exercises, startTime, endTime, title } = req.body;
     if (!req.user || !exercises || !startTime || !endTime) {
         return res.status(400).json({ message: "Missing required fields" });
     }
@@ -23,7 +22,7 @@ export const addWorkout = async (req, res) => {
             exercises: formattedExercises,
             startTime,
             duration: durationInMinutes,
-            notes,
+            title,
         });
 
         const savedWorkout = await newWorkout.save();
@@ -31,6 +30,22 @@ export const addWorkout = async (req, res) => {
     } catch (error) {
         console.error("Error adding workout:", error.message);
         res.status(500).json({ message: "Failed to add workout", error: error.message });
+    }
+};
+
+export const getAllUserWorkouts = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
+
+    try {
+        const workouts = await Workout.find({ user: userId }).sort({ createdAt: -1 }).populate("exercises.exercise", "title"); 
+        res.status(200).json(workouts);
+    } catch (error) {
+        console.error("Error finding user workouts:", error.message);
+        res.status(500).json({ message: "Failed to retrieve user workouts", error: error.message });
     }
 };
 

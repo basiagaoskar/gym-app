@@ -15,6 +15,7 @@ import { useAuthStore } from './store/useAuthStore';
 import NotFoundPage from './pages/NotFoundPage';
 import CurrentWorkoutPage from './pages/CurrentWorkout';
 import WorkoutDetailsPage from './pages/WorkoutDetailsPage';
+import WorkoutPlansPage from './pages/WorkoutPlansPage';
 
 function App() {
   const { theme } = useThemeStore();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
           <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
           <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
+          <Route path="/routines" element={authUser ? <WorkoutPlansPage /> : <Navigate to="/login" />} />
           <Route path="/user/:username" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/current-workout" element={authUser ? <CurrentWorkoutPage /> : <Navigate to="/login" />} />
           <Route path="/workout/:workoutId" element={authUser ? <WorkoutDetailsPage /> : <Navigate to="login" />} />
