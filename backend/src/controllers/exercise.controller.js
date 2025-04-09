@@ -5,7 +5,6 @@ export const getAllExercises = async (req, res) => {
         const exercises = await Exercise.find({ is_custom: false });
         res.status(200).json(exercises);
     } catch (error) {
-        console.error("Error fetching exercises:", error.message);
-        res.status(500).json({ message: "Failed to fetch exercises" });
+        next(error)
     }
 };

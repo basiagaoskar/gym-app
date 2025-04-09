@@ -28,8 +28,7 @@ export const addWorkout = async (req, res) => {
         const savedWorkout = await newWorkout.save();
         res.status(201).json(savedWorkout);
     } catch (error) {
-        console.error("Error adding workout:", error.message);
-        res.status(500).json({ message: "Failed to add workout", error: error.message });
+        next(error);
     }
 };
 
@@ -44,8 +43,7 @@ export const getAllUserWorkouts = async (req, res) => {
         const workouts = await Workout.find({ user: userId }).sort({ createdAt: -1 }).populate("exercises.exercise", "title");
         res.status(200).json(workouts);
     } catch (error) {
-        console.error("Error finding user workouts:", error.message);
-        res.status(500).json({ message: "Failed to retrieve user workouts", error: error.message });
+        next(error);
     }
 };
 
@@ -69,7 +67,6 @@ export const findWorkout = async (req, res) => {
 
         res.status(200).json(workout);
     } catch (error) {
-        console.error("Error finding workout:", error.message);
-        res.status(500).json({ message: "Failed to retrieve workout", error: error.message });
+        next(error);
     }
 };

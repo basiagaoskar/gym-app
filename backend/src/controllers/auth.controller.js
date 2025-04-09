@@ -10,8 +10,7 @@ export const checkAuth = (req, res) => {
         }
         res.status(200).json(req.user)
     } catch (error) {
-        console.error("Error in checkAuth:", error.message)
-        res.status(500).json({ message: "Failed to check authentication", error: error.message })
+        next(error)
     }
 }
 
@@ -58,8 +57,7 @@ export const signup = async (req, res) => {
         }
 
     } catch (error) {
-        console.log("Error in the signup controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -91,8 +89,7 @@ export const login = async (req, res) => {
         })
 
     } catch (error) {
-        console.log("Error in the login controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -101,8 +98,7 @@ export const logout = (req, res) => {
         res.cookie("jwt", "", { maxAge: 0 })
         res.status(200).json({ message: "Logged out successfully" })
     } catch (error) {
-        console.log("Error in the logout controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -149,8 +145,7 @@ export const updateProfile = async (req, res) => {
 
         res.status(200).json(updatedUser)
     } catch (error) {
-        console.log("Error in the updateProfile controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -176,8 +171,7 @@ export const updatePassword = async (req, res) => {
         res.status(200).json(updatedUser)
 
     } catch (error) {
-        console.log("Error in the updatePassword controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -192,8 +186,7 @@ export const deleteAccount = async (req, res) => {
         await User.findByIdAndDelete(userId)
         res.status(200).json({ message: "Account deleted successfully" })
     } catch (error) {
-        console.log("Error in deleteAccount controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
 
@@ -210,7 +203,6 @@ export const findUser = async (req, res) => {
         }
         res.status(200).json(foundUser)
     } catch (error) {
-        console.log("Error in findUser controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        next(error)
     }
 }
