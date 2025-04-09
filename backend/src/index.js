@@ -1,7 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import cookierParser from "cookie-parser"
+import cookieParser from "cookie-parser";
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 import authRoutes from './routes/auth.route.js';
 import exerciseRoutes from './routes/exercise.route.js';
@@ -9,6 +11,7 @@ import workoutRoutes from './routes/workout.route.js';
 import { errorHandler } from './middleware/errorHandler.middleware.js';
 
 import { connectDB } from './lib/db.js';
+import swaggerOptions from './swaggerDef.js';
 
 dotenv.config();
 
@@ -16,12 +19,15 @@ const PORT = process.env.PORT || 5001;
 
 const app = express();
 
-app.use(cookierParser())
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }))
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/exercise", exerciseRoutes);
