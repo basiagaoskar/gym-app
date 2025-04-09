@@ -5,10 +5,13 @@ import cloudinary from "../lib/cloudinary.js"
 
 export const checkAuth = (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(400).json({ message: "Unauthorized - No Token Provided" })
+        }
         res.status(200).json(req.user)
     } catch (error) {
-        console.log("Error in checkAuth controller", error.message)
-        res.status(500).json({ message: "Internal Server Error" })
+        console.error("Error in checkAuth:", error.message)
+        res.status(500).json({ message: "Failed to check authentication", error: error.message })
     }
 }
 

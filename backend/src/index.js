@@ -11,7 +11,7 @@ import { connectDB } from './lib/db.js';
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 
 const app = express();
 
@@ -26,7 +26,15 @@ app.use("/api/auth", authRoutes);
 app.use("/api/exercise", exerciseRoutes);
 app.use("/api/workout", workoutRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    connectDB();
-});
+let server;
+
+if (process.env.NODE_ENV !== 'test') {
+    server = app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        connectDB();
+    });
+} else {
+    server = app;
+}
+
+export { app, server };

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const addWorkout = async (req, res) => {
     const { exercises, startTime, endTime, title } = req.body;
-    if (!req.user || !exercises || !startTime || !endTime) {
+    if (!req.user || !exercises || !startTime || !endTime || !title) {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -41,7 +41,7 @@ export const getAllUserWorkouts = async (req, res) => {
     }
 
     try {
-        const workouts = await Workout.find({ user: userId }).sort({ createdAt: -1 }).populate("exercises.exercise", "title"); 
+        const workouts = await Workout.find({ user: userId }).sort({ createdAt: -1 }).populate("exercises.exercise", "title");
         res.status(200).json(workouts);
     } catch (error) {
         console.error("Error finding user workouts:", error.message);
@@ -54,6 +54,10 @@ export const findWorkout = async (req, res) => {
 
     if (!workoutId) {
         return res.status(400).json({ message: "Workout ID is required" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+        return res.status(400).json({ message: "Invalid workout ID format" });
     }
 
     try {
