@@ -8,6 +8,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import authRoutes from './routes/auth.route.js';
 import exerciseRoutes from './routes/exercise.route.js';
 import workoutRoutes from './routes/workout.route.js';
+import followRoutes from './routes/follow.route.js';
 import { errorHandler } from './middleware/errorHandler.middleware.js';
 
 import { connectDB } from './lib/db.js';
@@ -32,6 +33,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRoutes);
 app.use("/api/exercise", exerciseRoutes);
 app.use("/api/workout", workoutRoutes);
+app.use("/api/follow", followRoutes);
 app.use(errorHandler);
 
 let server;

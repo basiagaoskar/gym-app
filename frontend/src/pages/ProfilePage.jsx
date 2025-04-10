@@ -1,26 +1,61 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore.js';
 import LoggedInNavbar from '../components/LoggedInNavbar.jsx';
 import { Loader2, Calendar, Clock, ListChecks } from 'lucide-react';
 
 const ProfilePage = () => {
-    const { authUser, findUser, profile, fetchProfileWorkouts, profileWorkouts, isLoadingProfileWorkouts } = useAuthStore();
+    const { authUser, findUser, profile, isSearchingProfile, fetchProfileWorkouts, profileWorkouts, isLoadingProfileWorkouts, followUser, unfollowUser, isFollowingInProgress } = useAuthStore();
     const { username } = useParams();
 
     useEffect(() => {
         if (username && (!profile || profile.username !== username)) {
             findUser(username);
         }
-    }, [username]);
+    }, [username, findUser]);
 
     useEffect(() => {
         if (profile?._id) {
             fetchProfileWorkouts(profile._id);
         }
-    }, [profile?._id]);
+    }, [profile?._id, fetchProfileWorkouts]);
 
     const isOwnProfile = profile?._id === authUser?._id;
+    const isFollowing = profile?.isFollowing;
+    console.log(isFollowing)
+    const handleFollow = async () => {
+        if (!profile?._id || isFollowingInProgress) return;
+        await followUser(profile._id);
+    };
+
+    const handleUnfollow = async () => {
+        if (!profile?._id || isFollowingInProgress) return;
+        await unfollowUser(profile._id);
+    };
+
+    if (isSearchingProfile) {
+        return (
+            <>
+                <LoggedInNavbar />
+                <div className="min-h-screen bg-base-200 flex justify-center items-center pt-20">
+                    <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                </div>
+            </>
+        );
+    }
+
+    if (!profile && !isSearchingProfile) {
+        return (
+            <>
+                <LoggedInNavbar />
+                <div className="min-h-screen bg-base-200 flex flex-col justify-center items-center text-center pt-20 px-4">
+                    <h1 className="text-4xl font-bold text-error mb-4">User Not Found</h1>
+                    <p className="text-base-content/80">The profile "{username}" does not exist.</p>
+                    <Link to="/" className="btn btn-primary mt-6">Go Home</Link>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>
@@ -43,8 +78,18 @@ const ProfilePage = () => {
                                             </button>
                                         </Link>
                                     ) : (
-                                        <button className="btn btn-primary btn-sm md:btn-md w-full sm:w-auto">
-                                            Follow
+                                        <button
+                                            className={`btn btn-sm md:btn-md w-full sm:w-auto ${isFollowing ? 'btn-outline btn-secondary' : 'btn-primary'}`}
+                                            onClick={isFollowing ? handleUnfollow : handleFollow}
+                                            disabled={isFollowingInProgress}
+                                        >
+                                            {isFollowingInProgress ? (
+                                                <span className="loading loading-spinner loading-xs"></span>
+                                            ) : isFollowing ? (
+                                                'Unfollow'
+                                            ) : (
+                                                'Follow'
+                                            )}
                                         </button>
                                     )}
                                 </div>
@@ -55,8 +100,8 @@ const ProfilePage = () => {
 
                                 <div className="mt-4 flex justify-center sm:justify-start gap-4 sm:gap-6 text-sm md:text-base">
                                     <p><strong className="font-semibold">{profileWorkouts.length ?? 0}</strong> Workouts</p>
-                                    <p><strong className="font-semibold">0</strong> Followers</p>
-                                    <p><strong className="font-semibold">0</strong> Following</p>
+                                    <p><strong className="font-semibold">{profile?.followersCount ?? 0}</strong> Followers</p>
+                                    <p><strong className="font-semibold">{profile?.followingCount ?? 0}</strong> Following</p>
                                 </div>
                             </div>
                         </div>
@@ -74,13 +119,14 @@ const ProfilePage = () => {
                                 {profileWorkouts.map((workout) => (
                                     <li key={workout._id} className="bg-base-100 rounded-lg shadow p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:shadow-md transition-shadow duration-150">
                                         <div className="flex-grow min-w-0">
-                                            <h3 className="text-base font-semibold mb-1">
-                                                {workout.title}
-                                            </h3>
+                                            <Link to={`/workout/${workout._id}`} className="link-hover">
+                                                <h3 className="text-base font-semibold mb-1 truncate">
+                                                    {workout.title || "Workout"}
+                                                </h3>
+                                            </Link>
                                             <p className="text-sm font-semibold flex items-center gap-1.5 mb-1">
                                                 <Calendar size={14} className="text-base-content/60" />
                                                 {new Date(workout.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-
                                             </p>
                                             <p className="text-xs text-base-content/70 flex items-center gap-1.5">
                                                 <Clock size={14} /> Duration: {workout.duration} min

@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectRoute } from '../middleware/auth.middleware.js'
-import { addWorkout, getAllUserWorkouts, findWorkout } from '../controllers/workout.controller.js'
+import { addWorkout, getFeed, getAllUserWorkouts, findWorkout } from '../controllers/workout.controller.js'
 
 const router = express.Router()
 
@@ -10,6 +10,22 @@ const router = express.Router()
  *   name: Workouts
  *   description: User workout management
  */
+
+/**
+ * @swagger
+ * /workouts/feed:
+ *   get:
+ *     tags: [Workouts]
+ *     summary: Get workout feed from followed users
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: List of workouts from followed users
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/feed', protectRoute, getFeed);
 
 /**
  * @swagger

@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs"
 import User from "../models/user.model.js"
+import Follow from "../models/follow.model.js";
 import { generateToken } from "../lib/utils.js"
 import cloudinary from "../lib/cloudinary.js"
 
-export const checkAuth = (req, res) => {
+export const checkAuth = (req, res, next) => {
     try {
         if (!req.user) {
             return res.status(400).json({ message: "Unauthorized - No Token Provided" })
@@ -14,7 +15,7 @@ export const checkAuth = (req, res) => {
     }
 }
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { username, email, password } = req.body
     try {
         if (!username || !email || !password) {
@@ -61,7 +62,7 @@ export const signup = async (req, res) => {
     }
 }
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     const { email, password } = req.body
     try {
         if (!email || !password) {
@@ -93,7 +94,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const logout = (req, res) => {
+export const logout = (req, res, next) => {
     try {
         res.cookie("jwt", "", { maxAge: 0 })
         res.status(200).json({ message: "Logged out successfully" })
@@ -102,7 +103,7 @@ export const logout = (req, res) => {
     }
 }
 
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req, res, next) => {
     try {
         const { username, profilePic, bio } = req.body
         const userId = req.user._id
@@ -149,7 +150,7 @@ export const updateProfile = async (req, res) => {
     }
 }
 
-export const updatePassword = async (req, res) => {
+export const updatePassword = async (req, res, next) => {
     try {
         const { currentPassword, newPassword } = req.body
         const userId = req.user._id
@@ -175,7 +176,7 @@ export const updatePassword = async (req, res) => {
     }
 }
 
-export const deleteAccount = async (req, res) => {
+export const deleteAccount = async (req, res, next) => {
     try {
         const userId = req.user._id
         const user = await User.findById(userId)
@@ -190,18 +191,30 @@ export const deleteAccount = async (req, res) => {
     }
 }
 
-export const findUser = async (req, res) => {
+export const findUser = async (req, res, next) => {
     try {
         const { username } = req.params
+        const loggedInUserId = req.user?._id;
         const foundUser = await User.findOne({ username }).select('-password')
         if (!foundUser) {
-            return res.status(200).json({
-                username: "-",
-                email: "-",
-                bio: ""
-            })
+            return res.status(404).json({ message: "User not found" })
         }
-        res.status(200).json(foundUser)
+
+        const followersCount = await Follow.countDocuments({ following: foundUser._id });
+        const followingCount = await Follow.countDocuments({ follower: foundUser._id });
+
+        let isFollowing = false;
+        if (loggedInUserId && !foundUser._id.equals(loggedInUserId)) {
+            const isFollowingCheck = await Follow.exists({ follower: loggedInUserId, following: foundUser._id });
+            isFollowing = !isFollowingCheck;
+        }
+        const userProfile = foundUser.toObject();
+
+        userProfile.followersCount = followersCount;
+        userProfile.followingCount = followingCount;
+        userProfile.isFollowing = isFollowing;
+
+        res.status(200).json(userProfile)
     } catch (error) {
         next(error)
     }

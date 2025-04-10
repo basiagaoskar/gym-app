@@ -12,9 +12,13 @@ export const useAuthStore = create((set) => ({
     isUpdatingPassword: false,
     
     profile: null,
-    isSearchingProfile: true,
+    isSearchingProfile: false,
     profileWorkouts: [],
     isLoadingProfileWorkouts: true,
+    isFollowingInProgress: false,
+    
+    feedWorkouts: [],
+    isLoadingFeed: false,
 
     checkAuth: async () => {
         try {
@@ -101,6 +105,7 @@ export const useAuthStore = create((set) => ({
     },
 
     findUser: async (username) => {
+        set({ isSearchingProfile: true })
         try {
             const res = await axiosInstance.get(`/auth/user/${username}`)
             set({ profile: res.data })
@@ -109,6 +114,19 @@ export const useAuthStore = create((set) => ({
             set({ profile: null })
         } finally {
             set({ isSearchingProfile: false })
+        }
+    },
+
+    fetchFeed: async () => {
+        set({ isLoadingFeed: true });
+        try {
+            const res = await axiosInstance.get('/workout/feed');
+            set({ feedWorkouts: res.data });
+        } catch (error) {
+            console.error("Error in fetchFeed: ", error);
+            set({ feedWorkouts: [] });
+        } finally {
+            set({ isLoadingFeed: false });
         }
     },
     
@@ -125,5 +143,53 @@ export const useAuthStore = create((set) => ({
             set({ isLoadingProfileWorkouts: false })
         }
 
+    },
+
+    followUser: async (userIdToFollow) => {
+        set({ isFollowingInProgress: true });
+        try {
+            await axiosInstance.post(`/follow/follow/${userIdToFollow}`);
+            set((state) => {
+                if (state.profile && state.profile._id === userIdToFollow) {
+                    return {
+                        profile: {
+                            ...state.profile,
+                            isFollowing: true,
+                            followersCount: state.profile.followersCount + 1,
+                        },
+                         isFollowingInProgress: false
+                    };
+                }
+                return { isFollowingInProgress: false };
+            });
+            toast.success("User followed!");
+        } catch (error) {
+            toast.error(error.response.data.message || "Failed to follow user");
+             set({ isFollowingInProgress: false });
+        }
+    },
+
+    unfollowUser: async (userIdToUnfollow) => {
+         set({ isFollowingInProgress: true });
+        try {
+            await axiosInstance.delete(`/follow/unfollow/${userIdToUnfollow}`);
+             set((state) => {
+                if (state.profile && state.profile._id === userIdToUnfollow) {
+                    return {
+                        profile: {
+                            ...state.profile,
+                            isFollowing: false,
+                            followersCount: state.profile.followersCount - 1,
+                        },
+                         isFollowingInProgress: false
+                    };
+                }
+                 return { isFollowingInProgress: false };
+            });
+            toast.success("User unfollowed!");
+        } catch (error) {
+            toast.error(error.response.data.message || "Failed to unfollow user");
+             set({ isFollowingInProgress: false });
+        }
     },
 }))

@@ -1,30 +1,42 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { MessageSquare, ThumbsUp } from 'lucide-react';
 
 const WorkoutPost = ({ post }) => {
-    const exerciseSummary = post.exercises?.slice(0, 3).map(ex => ex.exercise.title).join(', ') + (post.exercises?.length > 3 ? '...' : '');
+    const userData = typeof post.user === 'object' && post.user !== null ? post.user : {};
+    const username = userData.username || 'Unknown User';
+    const profilePic = userData.profilePic || "/images/avatar.png";
+
+    const exerciseSummary = post.exercises?.slice(0, 3).map(ex => ex.exercise?.title || 'Exercise').join(', ') + (post.exercises?.length > 3 ? '...' : '');
+
+    const postDate = post.createdAt ? new Date(post.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'some time ago';
+
+    const workoutDetailsLink = `/workout/${post._id}`;
 
     return (
         <div className="card bg-base-100 shadow-md mb-4">
             <div className="card-body">
-                <div className="flex items-center gap-3">
-                    <div className="avatar">
+                <div className="flex items-center gap-3 mb-3">
+                    <Link to={`/user/${username}`} className="avatar">
                         <div className="w-10 rounded-full">
-                            <img src={post.profilePic || "/images/avatar.png"} alt={`${post.username} avatar`} />
+                            <img src={profilePic} alt={`${username}'s avatar`} />
                         </div>
-                    </div>
+                    </Link>
                     <div>
-                        <p className="font-semibold">{post.user}</p>
+                        <Link to={`/user/${username}`} className="font-semibold">{username}</Link>
                         <p className="text-xs text-base-content/60">
-                            Completed a workout • {post.createdAt}
+                            Completed a workout • {postDate}
                         </p>
                     </div>
                 </div>
 
                 <div>
+                    <Link to={workoutDetailsLink} className="link link-hover">
+                        <h2 className="card-title mb-1 text-lg">{post.title || "Workout"}</h2>
+                    </Link>
                     {post.notes && (
                         <div className="rounded text-xl">
-                            <p className="font-medium">{post.notes}</p>
+                            <p>{post.notes}</p>
                         </div>
                     )}
                     {exerciseSummary && (

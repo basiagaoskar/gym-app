@@ -1,7 +1,8 @@
 import Workout from "../models/workout.model.js";
+import Follow from "../models/follow.model.js";
 import mongoose from "mongoose";
 
-export const addWorkout = async (req, res) => {
+export const addWorkout = async (req, res, next) => {
     const { exercises, startTime, endTime, title } = req.body;
     if (!req.user || !exercises || !startTime || !endTime || !title) {
         return res.status(400).json({ message: "Missing required fields" });
@@ -32,7 +33,29 @@ export const addWorkout = async (req, res) => {
     }
 };
 
-export const getAllUserWorkouts = async (req, res) => {
+export const getFeed = async (req, res, next) => {
+    const userId = req.user._id;
+
+    try {
+        const followingRelations = await Follow.find({ follower: userId });
+        const followingIds = followingRelations.map(rel => rel.following);
+
+        followingIds.push(userId);
+
+        const feedWorkouts = await Workout.find({ user: { $in: followingIds } })
+            .sort({ createdAt: -1 })
+            .limit(50)
+            .populate("user", "username profilePic")
+            .populate("exercises.exercise", "title");
+
+        res.status(200).json(feedWorkouts);
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllUserWorkouts = async (req, res, next) => {
     const { userId } = req.params;
 
     if (!userId) {
@@ -47,7 +70,7 @@ export const getAllUserWorkouts = async (req, res) => {
     }
 };
 
-export const findWorkout = async (req, res) => {
+export const findWorkout = async (req, res, next) => {
     const { workoutId } = req.params;
 
     if (!workoutId) {
