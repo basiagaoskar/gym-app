@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
 import HomePage from './pages/HomePage';
+import AdminPage from './pages/AdminPage';
 import StartPage from './pages/StartPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -46,6 +47,8 @@ function App() {
           <Route path="/user/:username" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/current-workout" element={authUser ? <CurrentWorkoutPage /> : <Navigate to="/login" />} />
           <Route path="/workout/:workoutId" element={authUser ? <WorkoutDetailsPage /> : <Navigate to="login" />} />
+
+          <Route path="/admin" element={authUser && authUser.role === 'admin' ? <AdminPage /> : <Navigate to="login" />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes >

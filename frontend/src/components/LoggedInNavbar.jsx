@@ -1,4 +1,4 @@
-import { Dumbbell, House, LogOut, Settings, User } from 'lucide-react'
+import { Dumbbell, House, LogOut, Settings, ShieldCheck, User } from 'lucide-react'
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -33,6 +33,17 @@ function LoggedInNavbar() {
                                 </div>
                             </div>
                             <ul className="menu menu-sm dropdown-content bg-base-100 text-2xl rounded-box z-1 mt-3 w-52 p-2 shadow">
+                                {authUser?.role === 'admin' && (
+                                    <li>
+                                        <button
+                                            onClick={() => navigate(`/admin`)}
+                                            className="capitalize hover:bg-base-300 text-base"
+                                        >
+                                            <ShieldCheck className="size-5" />
+                                            Admin Panel
+                                        </button>
+                                    </li>
+                                )}
                                 {menuItems.map((section) => (
                                     <li key={section.text}>
                                         <button

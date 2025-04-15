@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
+import adminRoutes from './routes/admin.route.js';
 import authRoutes from './routes/auth.route.js';
 import exerciseRoutes from './routes/exercise.route.js';
 import workoutRoutes from './routes/workout.route.js';
@@ -30,6 +31,7 @@ app.use(cors({
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/exercise", exerciseRoutes);
 app.use("/api/workout", workoutRoutes);
