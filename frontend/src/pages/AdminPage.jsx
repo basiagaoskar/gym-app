@@ -1,15 +1,40 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loader2, ShieldCheck, Users } from 'lucide-react';
 import LoggedInNavbar from '../components/LoggedInNavbar';
+import EditUser from '../components/EditUser';
 import { useAdminStore } from '../store/useAdminStore';
 
 const AdminPage = () => {
-  const { getUsers, users, isLoadingUsers } = useAdminStore();
+  const { users, isLoadingUsers, getUsers, updateUser, deleteUser } = useAdminStore();
+  const [editingUser, setEditingUser] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const modalRef = useRef(null);
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
+
+  const handleDeleteUser = async (userId) => {
+    deleteUser(userId);
+  }
+
+  const handleEditUser = async (userId) => {
+    const userToEdit = users.find(user => user._id === userId);
+    setEditingUser(userToEdit);
+    setIsEditModalOpen(true);
+  }
+
+  const handleCloseEdit = () => {
+    setIsEditModalOpen(false);
+    setEditingUser(null);
+    modalRef.current.showModal();
+  };
+
+  const handleSaveChanges = async (updatedData) => {
+    updateUser(editingUser._id, updatedData);
+    setEditingUser(null);
+    setIsEditModalOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-base-200 text-base-content pt-20">
@@ -43,21 +68,31 @@ const AdminPage = () => {
                     <table className="table mt-4">
                       <thead>
                         <tr>
-                          <th>User ID</th>
                           <th>Name</th>
                           <th>Email</th>
+                          <th>Role</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {users.map(user => (
                           <tr key={user._id}>
-                            <td>{user._id}</td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
+                            <td className="capitalize">{user.role}</td>
                             <td className='flex gap-2'>
-                              <button className="btn btn-sm btn-primary">Edit</button>
-                              <button className="btn btn-sm btn-error">Delete</button>
+                              <button
+                                className="btn btn-sm btn-primary"
+                                onClick={() => handleEditUser(user._id)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="btn btn-sm btn-error"
+                                onClick={() => handleDeleteUser(user._id)}
+                              >
+                                Delete
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -72,6 +107,12 @@ const AdminPage = () => {
             </div>
           </div>
         </div>
+        <EditUser
+          user={editingUser}
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEdit}
+          onSave={handleSaveChanges}
+        />
       </div>
     </div>
   );
