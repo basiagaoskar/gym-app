@@ -1,11 +1,12 @@
 import { Dumbbell, House, LogOut, Settings, ShieldCheck, User } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuthStore } from '../store/useAuthStore'
 
 function LoggedInNavbar() {
-    const { authUser, logout } = useAuthStore()
+    const { authUser, foundProfiles, isSearchingUser, logout, searchProfile } = useAuthStore()
+    const [searchValue, setSearchValue] = useState("");
 
     const menuItems = [
         { text: "home", link: " ", icon: House },
@@ -14,6 +15,15 @@ function LoggedInNavbar() {
         { text: "settings", link: "settings", icon: Settings },
     ]
 
+    useEffect(() => {
+        if (searchValue.length > 0) {
+            searchProfile(searchValue)
+        };
+    }, [searchValue, searchProfile]);
+
+    function handleResultClick() {
+        setSearchValue("");
+    }
     const navigate = useNavigate()
 
     return (
@@ -25,7 +35,31 @@ function LoggedInNavbar() {
                     </Link>
 
                     <div className="flex gap-2">
-                        <input type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto" />
+                        <input type="text" placeholder="Search" value={searchValue} className="input input-bordered w-24 md:w-auto" onChange={(e) => setSearchValue(e.target.value)} />
+                        {false && (
+                            <span className="absolute top-full mt-1 left-0 right-0 flex justify-center p-1 bg-base-200 rounded-b-md shadow-lg z-50">
+                                <span className="loading loading-spinner loading-xs"></span>
+                            </span>
+                        )}
+                        {searchValue.length > 0 && foundProfiles.length > 0 && !isSearchingUser && (
+                            <ul className="absolute top-full mt-1 w-full max-w-[150px] md:max-w-[190px] menu bg-base-100 rounded-box">
+                                {foundProfiles.map((foundUser) => (
+                                    <li key={foundUser._id} onClick={() => handleResultClick()}>
+                                        <Link to={`/user/${foundUser.username}`} className="flex items-center gap-2">
+                                            <div className="avatar">
+                                                <div className="w-7 rounded-full">
+                                                    <img src={foundUser.profilePic || '/images/avatar.png'} alt={foundUser.username} />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span className='text-md font-semibold'>{foundUser.username}</span>
+                                            </div>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">

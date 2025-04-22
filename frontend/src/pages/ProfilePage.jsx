@@ -22,7 +22,7 @@ const ProfilePage = () => {
 
     const isOwnProfile = profile?._id === authUser?._id;
     const isFollowing = profile?.isFollowing;
-    console.log(isFollowing)
+
     const handleFollow = async () => {
         if (!profile?._id || isFollowingInProgress) return;
         await followUser(profile._id);

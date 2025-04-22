@@ -1,5 +1,5 @@
 import express from 'express'
-import { checkAuth, login, logout, findUser, signup, updateProfile, updatePassword, deleteAccount } from '../controllers/auth.controller.js'
+import { checkAuth, login, logout, findUser, searchUser, signup, updateProfile, updatePassword, deleteAccount } from '../controllers/auth.controller.js'
 import { protectRoute } from "../middleware/auth.middleware.js"
 
 const router = express.Router()
@@ -143,6 +143,36 @@ router.get("/check", protectRoute, checkAuth)
  *         description: User data
  */
 router.get("/user/:username", findUser)
+
+/**
+ * @swagger
+ * /auth/search/{username}:
+ *   get:
+ *     tags: [Auth]
+ *     summary: Search user by username
+ *     description: Searches for a user based on a partial or full username match.
+ *     parameters:
+ *       - name: username
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Username or part of it to search for
+ *     responses:
+ *       200:
+ *         description: List of matched users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/User'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: No matching users found
+ */
+router.get("/search/:username", searchUser)
 
 /**
  * @swagger

@@ -10,13 +10,15 @@ export const useAuthStore = create((set) => ({
     isLoggingIn: false,
     isUpdatingProfile: false,
     isUpdatingPassword: false,
-    
+
     profile: null,
+    foundProfiles: [],
     isSearchingProfile: false,
+    isSearchingUser: false,
     profileWorkouts: [],
     isLoadingProfileWorkouts: true,
     isFollowingInProgress: false,
-    
+
     feedWorkouts: [],
     isLoadingFeed: false,
 
@@ -117,6 +119,19 @@ export const useAuthStore = create((set) => ({
         }
     },
 
+    searchProfile: async (username) => {
+        set({ isSearchingUser: true })
+        try {
+            const res = await axiosInstance.get(`/auth/search/${username}`)
+            set({ foundProfiles: res.data })
+        } catch (error) {
+            console.log("Error in searchProfile: ", error)
+            set({ foundProfiles: [] })
+        } finally {
+            set({ isSearchingUser: false })
+        }
+    },
+
     fetchFeed: async () => {
         set({ isLoadingFeed: true });
         try {
@@ -129,7 +144,7 @@ export const useAuthStore = create((set) => ({
             set({ isLoadingFeed: false });
         }
     },
-    
+
     fetchProfileWorkouts: async (userId) => {
         if (!userId) return;
         set({ profileWorkouts: [], isLoadingProfileWorkouts: true })
@@ -157,7 +172,7 @@ export const useAuthStore = create((set) => ({
                             isFollowing: true,
                             followersCount: state.profile.followersCount + 1,
                         },
-                         isFollowingInProgress: false
+                        isFollowingInProgress: false
                     };
                 }
                 return { isFollowingInProgress: false };
@@ -165,15 +180,15 @@ export const useAuthStore = create((set) => ({
             toast.success("User followed!");
         } catch (error) {
             toast.error(error.response.data.message || "Failed to follow user");
-             set({ isFollowingInProgress: false });
+            set({ isFollowingInProgress: false });
         }
     },
 
     unfollowUser: async (userIdToUnfollow) => {
-         set({ isFollowingInProgress: true });
+        set({ isFollowingInProgress: true });
         try {
             await axiosInstance.delete(`/follow/unfollow/${userIdToUnfollow}`);
-             set((state) => {
+            set((state) => {
                 if (state.profile && state.profile._id === userIdToUnfollow) {
                     return {
                         profile: {
@@ -181,15 +196,15 @@ export const useAuthStore = create((set) => ({
                             isFollowing: false,
                             followersCount: state.profile.followersCount - 1,
                         },
-                         isFollowingInProgress: false
+                        isFollowingInProgress: false
                     };
                 }
-                 return { isFollowingInProgress: false };
+                return { isFollowingInProgress: false };
             });
             toast.success("User unfollowed!");
         } catch (error) {
             toast.error(error.response.data.message || "Failed to unfollow user");
-             set({ isFollowingInProgress: false });
+            set({ isFollowingInProgress: false });
         }
     },
 }))

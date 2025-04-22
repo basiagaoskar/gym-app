@@ -219,3 +219,25 @@ export const findUser = async (req, res, next) => {
         next(error)
     }
 }
+
+export const searchUser = async (req, res, next) => {
+    try {
+        const { username } = req.params;
+
+        if (!username || typeof username !== 'string' || username.trim().length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const query = username.trim();
+
+        const users = await User.find({
+            username: { $regex: query, $options: 'i' }
+        })
+            .select("username fullName profilePic _id")
+            .limit(5);
+
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+}
