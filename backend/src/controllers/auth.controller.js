@@ -206,7 +206,7 @@ export const findUser = async (req, res, next) => {
         let isFollowing = false;
         if (loggedInUserId && !foundUser._id.equals(loggedInUserId)) {
             const isFollowingCheck = await Follow.exists({ follower: loggedInUserId, following: foundUser._id });
-            isFollowing = !isFollowingCheck;
+            isFollowing = isFollowingCheck ? true : false;
         }
         const userProfile = foundUser.toObject();
 

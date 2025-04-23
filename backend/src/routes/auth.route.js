@@ -142,7 +142,7 @@ router.get("/check", protectRoute, checkAuth)
  *       200:
  *         description: User data
  */
-router.get("/user/:username", findUser)
+router.get("/user/:username", protectRoute, findUser)
 
 /**
  * @swagger
@@ -172,7 +172,7 @@ router.get("/user/:username", findUser)
  *       404:
  *         description: No matching users found
  */
-router.get("/search/:username", searchUser)
+router.get("/search/:username", protectRoute, searchUser)
 
 /**
  * @swagger
