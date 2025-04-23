@@ -14,4 +14,13 @@ export const useWorkoutStore = create((set) => ({
         }
     },
 
+    deleteWorkout: async (workoutId) => {
+        try {
+            await axiosInstance.delete(`/workout/${workoutId}`);
+            set({ workout: [] });
+            toast.success("Workout deleted successfully");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        }
+    },
 }));

@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectRoute } from '../middleware/auth.middleware.js'
-import { addWorkout, getFeed, getAllUserWorkouts, findWorkout } from '../controllers/workout.controller.js'
+import { addWorkout, getFeed, getAllUserWorkouts, findWorkout, deleteWorkout } from '../controllers/workout.controller.js'
 
 const router = express.Router()
 
@@ -94,5 +94,32 @@ router.get('/user/:userId', protectRoute, getAllUserWorkouts)
  *         description: Unauthorized
  */
 router.post("/save-workout", protectRoute, addWorkout)
+
+/**
+ * @swagger
+ * /workouts/{workoutId}:
+ *   delete:
+ *     tags: [Workouts]
+ *     summary: Delete a specific workout by ID
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: workoutId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workout to delete
+ *     responses:
+ *       200:
+ *         description: Workout successfully deleted
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden – not owner of the workout
+ *       404:
+ *         description: Workout not found
+ */
+router.delete("/:workoutId", protectRoute, deleteWorkout);
 
 export default router

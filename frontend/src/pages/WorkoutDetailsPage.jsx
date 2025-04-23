@@ -1,16 +1,31 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Trash2 } from 'lucide-react';
 import { useWorkoutStore } from "../store/useWorkoutStore";
 import LoggedInNavbar from "../components/LoggedInNavbar";
+import { useAuthStore } from "../store/useAuthStore";
 
 const WorkoutDetailsPage = () => {
     const { workoutId } = useParams();
-    const { workout, getWorkout } = useWorkoutStore();
+    const { workout, getWorkout, deleteWorkout } = useWorkoutStore();
+    const { authUser } = useAuthStore();
+    const isOwnWorkout = workout.user === authUser?._id;
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (workoutId) {
             getWorkout(workoutId)
         }
     }, [workoutId])
+
+    const handleDeleteWorkout = async () => {
+        try {
+            await deleteWorkout(workoutId);
+            navigate(`/user/${authUser.username}`);
+        } catch (error) {
+            console.error("Error deleting workout:", error);
+        }
+    }
 
     return (
         <div className="min-h-screen bg-base-200 text-base-content pt-20 pb-10">
@@ -19,7 +34,15 @@ const WorkoutDetailsPage = () => {
 
                 {workout && workout._id === workoutId && workout.exercises ? (
                     <>
-                        <h1 className="text-3xl md:text-4xl font-bold mb-2">{workout.title || "Workout Details"}</h1>
+                        <div className="flex justify-between items-center mb-4">
+
+                            <h1 className="text-3xl md:text-4xl font-bold mb-2">{workout.title || "Workout Details"}</h1>
+                            {isOwnWorkout && (
+                                <div className="btn btn-outline btn-error w-auto" onClick={handleDeleteWorkout}>
+                                    <Trash2 />
+                                </div>
+                            )}
+                        </div>
                         <p className="text-sm mb-6 text-base-content/70">
                             Date: {new Date(workout.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                         </p>

@@ -93,3 +93,29 @@ export const findWorkout = async (req, res, next) => {
         next(error);
     }
 };
+
+export const deleteWorkout = async (req, res, next) => {
+    const { workoutId } = req.params;
+
+    if (!workoutId) {
+        return res.status(400).json({ message: "Workout ID is required" });
+    }
+
+    try {
+        const workout = await Workout.findById(workoutId);
+
+        if (!workout) {
+            return res.status(404).json({ message: "Workout not found" });
+        }
+
+        if (workout.user.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: "Forbidden – You are not allowed to delete this workout" });
+        }
+
+        await Workout.findByIdAndDelete(workoutId);
+
+        res.status(200).json({ message: "Workout deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
