@@ -26,6 +26,7 @@ export const useAdminStore = create((set) => ({
             }));
             toast.success('User updated successfully');
         } catch (error) {
+            toast.error('Could not update user');
             console.error('Error in updateUser: ', error);
         }
     },
