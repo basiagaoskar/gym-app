@@ -9,7 +9,7 @@ const WorkoutDetailsPage = () => {
     const { workoutId } = useParams();
     const { workout, getWorkout, deleteWorkout } = useWorkoutStore();
     const { authUser } = useAuthStore();
-    const isOwnWorkout = workout.user === authUser?._id;
+    const isOwnWorkout = workout?.user === authUser?._id;
     const navigate = useNavigate();
 
     useEffect(() => {

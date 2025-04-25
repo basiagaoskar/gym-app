@@ -1,17 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, ThumbsUp } from 'lucide-react';
 
+import { useWorkoutStore } from '../store/useWorkoutStore';
+import { useAuthStore } from '../store/useAuthStore';
+
 const WorkoutPost = ({ post }) => {
-    const userData = typeof post.user === 'object' && post.user !== null ? post.user : {};
-    const username = userData.username || 'Unknown User';
-    const profilePic = userData.profilePic || "/images/avatar.png";
+    const { toggleLike } = useWorkoutStore();
+    const { authUser } = useAuthStore();
+
+    const loggedInUserId = authUser?._id;
+
+    const username = post.user.username || 'Unknown User';
+    const profilePic = post.user.profilePic || "/images/avatar.png";
 
     const exerciseSummary = post.exercises?.slice(0, 3).map(ex => ex.exercise?.title || 'Exercise').join(', ') + (post.exercises?.length > 3 ? '...' : '');
 
     const postDate = post.createdAt ? new Date(post.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'some time ago';
 
     const workoutDetailsLink = `/workout/${post._id}`;
+
+    const [likes, setLikes] = useState(post.likes || []);
+
+    const isLikedByCurrentUser = loggedInUserId && likes.includes(loggedInUserId);
+    const likesCount = likes.length;
+
+    const handleLikeToggle = async (e) => {
+        e.preventDefault();
+
+        setLikes(prevLikes => {
+            if (loggedInUserId && prevLikes.includes(loggedInUserId)) {
+                return prevLikes.filter(id => id !== loggedInUserId);
+            } else if (loggedInUserId) {
+                return [...prevLikes, loggedInUserId];
+            }
+            return prevLikes;
+        });
+
+        await toggleLike(post._id);
+    };
 
     return (
         <div className="card bg-base-100 shadow-md mb-4">
@@ -42,12 +69,15 @@ const WorkoutPost = ({ post }) => {
                     {exerciseSummary && (
                         <p className="mt-1"><span className="font-medium">Exercises:</span> {exerciseSummary}</p>
                     )}
-                    
                 </div>
 
-                <div className="card-actions justify-end mt-3">
-                    <button className="btn btn-ghost btn-sm">
-                        <ThumbsUp size={16} /> Like
+                <div className="card-actions justify-end border-t border-base-content/10 pt-3 mt-3">
+                    <button
+                        className={`btn btn-ghost btn-sm ${isLikedByCurrentUser ? 'text-primary' : 'text-base-content'}`}
+                        onClick={handleLikeToggle}
+                    >
+                        <ThumbsUp size={16} className={isLikedByCurrentUser ? 'fill-current' : ''} />
+                        <span className="text-sm font-medium"> {likesCount}</span>
                     </button>
                     <button className="btn btn-ghost btn-sm">
                         <MessageSquare size={16} /> Comment

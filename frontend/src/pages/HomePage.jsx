@@ -3,10 +3,10 @@ import { Loader2 } from 'lucide-react';
 
 import LoggedInNavbar from '../components/LoggedInNavbar';
 import WorkoutPost from '../components/WorkoutPost';
-import { useAuthStore } from '../store/useAuthStore';
+import { useWorkoutStore } from '../store/useWorkoutStore';
 
 const HomePage = () => {
-    const { feedWorkouts, isLoadingFeed, fetchFeed } = useAuthStore();
+    const { feedWorkouts, isLoadingFeed, fetchFeed } = useWorkoutStore();
 
     useEffect(() => {
         fetchFeed()

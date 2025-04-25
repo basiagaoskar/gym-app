@@ -15,12 +15,7 @@ export const useAuthStore = create((set) => ({
     foundProfiles: [],
     isSearchingProfile: false,
     isSearchingUser: false,
-    profileWorkouts: [],
-    isLoadingProfileWorkouts: true,
     isFollowingInProgress: false,
-
-    feedWorkouts: [],
-    isLoadingFeed: false,
 
     checkAuth: async () => {
         try {
@@ -130,34 +125,6 @@ export const useAuthStore = create((set) => ({
         } finally {
             set({ isSearchingUser: false })
         }
-    },
-
-    fetchFeed: async () => {
-        set({ isLoadingFeed: true });
-        try {
-            const res = await axiosInstance.get('/workout/feed');
-            set({ feedWorkouts: res.data });
-        } catch (error) {
-            console.error("Error in fetchFeed: ", error);
-            set({ feedWorkouts: [] });
-        } finally {
-            set({ isLoadingFeed: false });
-        }
-    },
-
-    fetchProfileWorkouts: async (userId) => {
-        if (!userId) return;
-        set({ profileWorkouts: [], isLoadingProfileWorkouts: true })
-        try {
-            const res = await axiosInstance.get(`/workout/user/${userId}`)
-            set({ profileWorkouts: res.data })
-        } catch (error) {
-            toast.error(error.response.data.message)
-            set({ profileWorkouts: [] })
-        } finally {
-            set({ isLoadingProfileWorkouts: false })
-        }
-
     },
 
     followUser: async (userIdToFollow) => {

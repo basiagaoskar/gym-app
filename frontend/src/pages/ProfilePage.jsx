@@ -3,10 +3,12 @@ import { Link, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore.js';
 import LoggedInNavbar from '../components/LoggedInNavbar.jsx';
 import { Loader2, Calendar, Clock, ListChecks } from 'lucide-react';
+import { useWorkoutStore } from '../store/useWorkoutStore.js';
 
 const ProfilePage = () => {
-    const { authUser, findUser, profile, isSearchingProfile, fetchProfileWorkouts, profileWorkouts, isLoadingProfileWorkouts, followUser, unfollowUser, isFollowingInProgress } = useAuthStore();
+    const { authUser, findUser, profile, isSearchingProfile, isLoadingProfileWorkouts, followUser, unfollowUser, isFollowingInProgress } = useAuthStore();
     const { username } = useParams();
+    const { fetchProfileWorkouts, profileWorkouts } = useWorkoutStore();
 
     useEffect(() => {
         if (username && (!profile || profile.username !== username)) {

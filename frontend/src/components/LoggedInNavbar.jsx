@@ -16,10 +16,17 @@ function LoggedInNavbar() {
     ]
 
     useEffect(() => {
-        if (searchValue.length > 0) {
-            searchProfile(searchValue)
-        };
-    }, [searchValue, searchProfile]);
+        const findUser = setTimeout(() => {
+            if (searchValue.length > 0) {
+                console.log("Searching for: ", searchValue);
+                searchProfile(searchValue);
+            };
+        }, 500);
+
+        return () => {
+            clearTimeout(findUser);
+        }
+    }, [searchValue, searchProfile], 300);
 
     function handleResultClick() {
         setSearchValue("");

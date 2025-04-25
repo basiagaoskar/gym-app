@@ -1,6 +1,6 @@
 import express from 'express'
 import { protectRoute } from '../middleware/auth.middleware.js'
-import { addWorkout, getFeed, getAllUserWorkouts, findWorkout, deleteWorkout } from '../controllers/workout.controller.js'
+import { addWorkout, getFeed, getAllUserWorkouts, findWorkout, deleteWorkout, toggleLikeWorkout } from '../controllers/workout.controller.js'
 
 const router = express.Router()
 
@@ -94,6 +94,31 @@ router.get('/user/:userId', protectRoute, getAllUserWorkouts)
  *         description: Unauthorized
  */
 router.post("/save-workout", protectRoute, addWorkout)
+
+/**
+ * @swagger
+ * /workouts/like/{workoutId}:
+ *   post:
+ *     tags: [Workouts]
+ *     summary: Like or unlike a workout
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: workoutId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workout to like/unlike
+ *     responses:
+ *       200:
+ *         description: Like status toggled
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Workout not found
+ */
+router.post("/like/:workoutId", protectRoute, toggleLikeWorkout);
 
 /**
  * @swagger

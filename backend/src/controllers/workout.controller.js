@@ -33,6 +33,29 @@ export const addWorkout = async (req, res, next) => {
     }
 };
 
+export const toggleLikeWorkout = async (req, res, next) => {
+    const { workoutId } = req.params;
+    const userId = req.user._id;
+    try {
+        const workout = await Workout.findById(workoutId);
+        if (!workout) {
+            return res.status(404).json({ message: "Workout not found" });
+        }
+
+        if (workout.likes.includes(userId)) {
+            workout.likes = workout.likes.filter(id => id.toString() !== userId.toString());
+        }
+        else {
+            workout.likes.push(userId);
+        }
+        
+        await workout.save();
+        res.status(200).json({ message: "Workout liked/unliked successfully", workout });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const getFeed = async (req, res, next) => {
     const userId = req.user._id;
 
