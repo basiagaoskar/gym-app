@@ -1,20 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore.js';
 import LoggedInNavbar from '../components/LoggedInNavbar.jsx';
-import { Loader2, Calendar, Clock, ListChecks } from 'lucide-react';
+import { Loader2, Calendar, Clock, ListChecks, X } from 'lucide-react';
 import { useWorkoutStore } from '../store/useWorkoutStore.js';
 
 const ProfilePage = () => {
-    const { authUser, findUser, profile, isSearchingProfile, isLoadingProfileWorkouts, followUser, unfollowUser, isFollowingInProgress } = useAuthStore();
+    const { authUser, findUser, profile, isSearchingProfile, followUser, unfollowUser, isFollowingInProgress, fetchFollowers, fetchFollowing, followersList, followingList, isLoadingFollowers } = useAuthStore();
     const { username } = useParams();
-    const { fetchProfileWorkouts, profileWorkouts } = useWorkoutStore();
+    const { profileWorkouts, isLoadingProfileWorkouts, fetchProfileWorkouts } = useWorkoutStore();
+
+    const [visibleListType, setVisibleListType] = useState(null);
+    const currentList = visibleListType === 'followers' ? followersList : followingList;
+    const listTitle = visibleListType === 'followers' ? 'Followers' : 'Following';
 
     useEffect(() => {
+        setVisibleListType(null);
         if (username && (!profile || profile.username !== username)) {
             findUser(username);
         }
-    }, [username, findUser]);
+    }, [username, findUser, profile]);
 
     useEffect(() => {
         if (profile?._id) {
@@ -33,6 +38,26 @@ const ProfilePage = () => {
     const handleUnfollow = async () => {
         if (!profile?._id || isFollowingInProgress) return;
         await unfollowUser(profile._id);
+    };
+
+    const handleShowList = (listType) => {
+        if (!profile?._id) return;
+
+        if (visibleListType === listType) {
+            setVisibleListType(null);
+            return;
+        }
+
+        setVisibleListType(listType);
+        if (listType === 'followers') {
+            fetchFollowers(profile._id);
+        } else {
+            fetchFollowing(profile._id);
+        }
+    };
+
+    const handleCloseList = () => {
+        setVisibleListType(null);
     };
 
     if (isSearchingProfile) {
@@ -63,6 +88,48 @@ const ProfilePage = () => {
         <>
             <LoggedInNavbar />
             <div className="min-h-screen bg-base-200 text-base-content pt-20 pb-10 flex flex-col items-center px-4">
+
+
+                {visibleListType && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" onClick={handleCloseList}>
+                        <div className="bg-base-100 rounded-lg w-full max-w-md p-5 relative max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleCloseList}>
+                                <X size={20} />
+                            </button>
+                            <h3 className="font-bold text-lg mb-4">{listTitle}</h3>
+                            <div className="overflow-y-auto">
+                                {isLoadingFollowers ? (
+                                    <div className="flex justify-center items-center py-10">
+                                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                    </div>
+                                ) : currentList.length > 0 ? (
+                                    <ul className="space-y-3">
+                                        {currentList.map((user) => (
+                                            <li key={user._id} className="flex items-center gap-3">
+                                                <Link to={`/user/${user.username}`} onClick={handleCloseList}>
+                                                    <div className="w-10 h-10 rounded-full overflow-hidden">
+                                                        <img
+                                                            src={user.profilePic || '/images/avatar.png'}
+                                                            alt={`${user.username}'s avatar`}
+                                                        />
+                                                    </div>
+                                                </Link>
+                                                <Link to={`/user/${user.username}`} onClick={handleCloseList} className="font-semibold text-base-content hover:underline">
+                                                    {user.username}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-center text-base-content py-5 italic">
+                                        No users to display.
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="bg-base-300 rounded-lg shadow-lg w-full max-w-4xl mt-6">
 
                     <div className="w-full bg-base-100 shadow rounded-t-lg p-6 md:p-8">
@@ -102,8 +169,18 @@ const ProfilePage = () => {
 
                                 <div className="mt-4 flex justify-center sm:justify-start gap-4 sm:gap-6 text-sm md:text-base">
                                     <p><strong className="font-semibold">{profileWorkouts.length ?? 0}</strong> Workouts</p>
-                                    <p><strong className="font-semibold">{profile?.followersCount ?? 0}</strong> Followers</p>
-                                    <p><strong className="font-semibold">{profile?.followingCount ?? 0}</strong> Following</p>
+                                    <p>
+                                        <strong className="font-semibold">{profile?.followersCount ?? 0}</strong>
+                                        <button onClick={() => handleShowList('followers')} className="ml-1 hover:underline cursor-pointer">
+                                            Followers
+                                        </button>
+                                    </p>
+                                    <p>
+                                        <strong className="font-semibold">{profile?.followingCount ?? 0}</strong>
+                                        <button onClick={() => handleShowList('following')} className="ml-1 hover:underline cursor-pointer">
+                                            Following
+                                        </button>
+                                    </p>
                                 </div>
                             </div>
                         </div>

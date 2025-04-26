@@ -15,7 +15,11 @@ export const useAuthStore = create((set) => ({
     foundProfiles: [],
     isSearchingProfile: false,
     isSearchingUser: false,
+
     isFollowingInProgress: false,
+    followersList: [],
+    followingList: [],
+    isLoadingFollowers: false,
 
     checkAuth: async () => {
         try {
@@ -172,6 +176,32 @@ export const useAuthStore = create((set) => ({
         } catch (error) {
             toast.error(error.response.data.message || "Failed to unfollow user");
             set({ isFollowingInProgress: false });
+        }
+    },
+
+    fetchFollowers: async (userId) => {
+        set({ isLoadingFollowers: true });
+        try {
+            const res = await axiosInstance.get(`/follow/followers/${userId}`);
+            set({ followersList: res.data });
+        } catch (error) {
+            console.log("Error in fetchFollowers: ", error);
+            set({ followersList: [] });
+        } finally {
+            set({ isLoadingFollowers: false });
+        }
+    },
+
+    fetchFollowing: async (userId) => {
+        set({ isLoadingFollowers: true });
+        try {
+            const res = await axiosInstance.get(`/follow/following/${userId}`);
+            set({ followingList: res.data });
+        } catch (error) {
+            console.log("Error in fetchFollowing: ", error);
+            set({ followingList: [] });
+        } finally {
+            set({ isLoadingFollowers: false });
         }
     },
 }))
