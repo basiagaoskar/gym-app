@@ -1,8 +1,8 @@
-import Exercise from "../models/exercise.model.js"
+import { fetchAllDefaultExercises } from "../services/exercise.service.js";
 
 export const getAllExercises = async (req, res, next) => {
     try {
-        const exercises = await Exercise.find({ is_custom: false });
+        const exercises = await fetchAllDefaultExercises();
         res.status(200).json(exercises);
     } catch (error) {
         next(error)
