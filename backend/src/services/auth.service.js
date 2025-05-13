@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import Follow from "../models/follow.model.js";
 import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
+import { publishMessage } from "../lib/rabbitmq.js";
 
 export const verifyAuth = (user) => {
     if (!user) {
@@ -44,6 +45,14 @@ export const registerUser = async (userData, res) => {
     if (newUser) {
         await newUser.save();
         generateToken(newUser._id, res);
+
+        try {
+            await publishMessage('userRegisteredQueue', { userId: newUser._id, username: newUser.username, email: newUser.email });
+        } catch (error) {
+            console.error("Error publishing user registration message:", error);
+        }
+
+
         return {
             _id: newUser._id,
             username: newUser.username,

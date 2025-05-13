@@ -8,6 +8,10 @@ services:
       - /app/node_modules
     networks:
       - app-network
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
+    depends_on:
+      - rabbitmq
 
   frontend:
     build: ./frontend
@@ -19,6 +23,30 @@ services:
     networks:
       - app-network
     command: npm run dev
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
+
+  consumer:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    command: sh -c "sleep 15 && node src/user.consumer.js"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq
 
 networks:
   app-network:
