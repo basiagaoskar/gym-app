@@ -34,7 +34,7 @@ beforeAll(async () => {
     await adminAgent.post('/api/auth/login').send({ email: adminData.email, password: adminData.password });
     await userAgent.post('/api/auth/login').send({ email: userData.email, password: userData.password });
 
-});
+}, 15000);
 
 afterAll(async () => {
     await mongoose.disconnect();

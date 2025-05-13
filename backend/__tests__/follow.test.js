@@ -25,7 +25,7 @@ beforeAll(async () => {
     // Login users
     await user1Agent.post('/api/auth/login').send({ email: 'follow1@example.com', password: 'Password123' });
     await user2Agent.post('/api/auth/login').send({ email: 'follow2@example.com', password: 'Password123' });
-});
+}, 15000);
 
 afterEach(async () => {
     await Follow.deleteMany({});

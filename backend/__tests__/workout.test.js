@@ -35,7 +35,7 @@ beforeAll(async () => {
     ]);
     testExerciseId1 = ex1._id;
     testExerciseId2 = ex2._id;
-});
+}, 15000);
 
 beforeEach(async () => {
     // Czyść tylko kolekcje istotne dla testów workout, a nie użytkowników

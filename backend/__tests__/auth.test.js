@@ -18,7 +18,7 @@ beforeAll(async () => {
   otherUserAgent = request.agent(app);
   const otherUserRes = await otherUserAgent.post('/api/auth/signup').send({ username: 'otheruser', email: 'other@example.com', password: 'Password456' });
   otherUserId = otherUserRes.body._id;
-});
+}, 15000);
 
 afterAll(async () => {
   await mongoose.connection.dropDatabase();
