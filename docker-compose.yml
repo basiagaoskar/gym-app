@@ -40,6 +40,7 @@ services:
     build: ./backend
     volumes:
       - ./backend:/app
+      - /app/node_modules
     command: sh -c "sleep 15 && node src/user.consumer.js"
     depends_on:
       - rabbitmq
