@@ -9,7 +9,7 @@ import { useCommentStore } from '../store/useCommentStore';
 const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) => {
     const { toggleLike } = useWorkoutStore();
     const { authUser } = useAuthStore();
-    const { comments, isLoadingComments, isAddingComment, fetchComments, addComment, clearComments } = useCommentStore();
+    const { comments, isLoadingComments, isAddingComment, isDeletingComment, fetchComments, addComment, deleteComment, clearComments } = useCommentStore();
 
     const [likes, setLikes] = useState(post.likes || []);
     const showComments = activeCommentsPostId === post._id;
@@ -75,7 +75,9 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
     };
 
     const handleDeleteComment = async (commentId) => {
+        if (!loggedInUserId || !post._id) return;
 
+        await deleteComment(commentId);
     };
 
     const postSpecificComments = comments.filter(comment => comment.workout === post._id);
