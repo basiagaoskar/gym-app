@@ -47,7 +47,7 @@ export const deleteComment = async (commentId, userId, userRole) => {
         throw new Error("Comment not found");
     }
     if (comment.user.toString() !== userId.toString() && userRole !== 'admin') {
-        throw new Error("Forbidden – You are not allowed to delete this comment");
+        throw new Error("Forbidden - You are not allowed to delete this comment");
     }
     await Comment.findByIdAndDelete(commentId);
 };
