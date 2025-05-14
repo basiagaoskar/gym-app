@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectRoute } from '../middleware/auth.middleware.js';
-import { addComment } from '../controllers/comment.controller.js';
+import { addComment, getWorkoutComments } from '../controllers/comment.controller.js';
 
 const router = express.Router();
 
@@ -50,5 +50,37 @@ const router = express.Router();
  *         description: Workout not found
  */
 router.post('/:workoutId', protectRoute, addComment);
+
+/**
+ * @swagger
+ * /comments/{workoutId}:
+ *   get:
+ *     tags: [Comments]
+ *     summary: Get comments for a specific workout
+ *     description: Returns a list of comments associated with the specified workout. Requires authentication.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: workoutId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the workout
+ *     responses:
+ *       200:
+ *         description: List of comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/Comment'
+ *       400:
+ *         description: Invalid workout ID format
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/:workoutId', protectRoute, getWorkoutComments);
 
 export default router;

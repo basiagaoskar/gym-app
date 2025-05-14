@@ -26,3 +26,15 @@ export const createComment = async (userId, workoutId, content) => {
 
     return await Comment.findById(newComment._id).populate("user", "username profilePic");
 };
+
+export const getCommentsForWorkout = async (workoutId) => {
+    if (!mongoose.Types.ObjectId.isValid(workoutId)) {
+        throw new Error("Invalid workout ID format");
+    }
+
+    const comments = await Comment.find({ workout: workoutId })
+        .populate("user", "username profilePic")
+        .sort({ createdAt: -1 });
+
+    return comments;
+};
