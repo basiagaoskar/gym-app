@@ -5,6 +5,7 @@ import { axiosInstance } from "../lib/axios";
 export const useCommentStore = create((set, get) => ({
     comments: [],
     isLoadingComments: false,
+    isAddingComment: false,
 
     fetchComments: async (workoutId) => {
         if (!workoutId) return;
@@ -18,6 +19,28 @@ export const useCommentStore = create((set, get) => ({
             set({ comments: [] });
         } finally {
             set({ isLoadingComments: false });
+        }
+    },
+
+    addComment: async (workoutId, content) => {
+        if (!workoutId || !content.trim()) {
+            toast.error("Comment cannot be empty.");
+            return null;
+        }
+        set({ isAddingComment: true });
+        try {
+            const res = await axiosInstance.post(`/comment/${workoutId}`, { content });
+            set((state) => ({
+                comments: [...state.comments, res.data],
+            }));
+            toast.success("Comment added!");
+            return res.data;
+        } catch (error) {
+            console.error("Error adding comment:", error);
+            toast.error(error.response?.data?.message || "Failed to add comment");
+            return null;
+        } finally {
+            set({ isAddingComment: false });
         }
     },
 

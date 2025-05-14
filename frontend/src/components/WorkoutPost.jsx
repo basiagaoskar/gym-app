@@ -9,7 +9,7 @@ import { useCommentStore } from '../store/useCommentStore';
 const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) => {
     const { toggleLike } = useWorkoutStore();
     const { authUser } = useAuthStore();
-    const { comments, isLoadingComments, fetchComments, clearComments } = useCommentStore();
+    const { comments, isLoadingComments, isAddingComment, fetchComments, addComment, clearComments } = useCommentStore();
 
     const [likes, setLikes] = useState(post.likes || []);
     const showComments = activeCommentsPostId === post._id;
@@ -65,7 +65,13 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
     };
 
     const handleAddCommentSubmit = async (e) => {
+        e.preventDefault();
+        if (!newCommentText.trim() || !loggedInUserId || !post._id) return;
 
+        const success = await addComment(post._id, newCommentText);
+        if (success) {
+            setNewCommentText("");
+        }
     };
 
     const handleDeleteComment = async (commentId) => {
@@ -179,13 +185,15 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
                                     placeholder="Write a comment..."
                                     value={newCommentText}
                                     onChange={(e) => setNewCommentText(e.target.value)}
+                                    disabled={isAddingComment}
                                 />
 
                                 <button
                                     type="submit"
                                     className="btn btn-primary flex-grow m-auto !h-20 sm:!h-10 !min-h-0"
+                                    disabled={isAddingComment || !newCommentText.trim()}
                                 >
-                                    <Send size={16} />
+                                    {isAddingComment ? <Loader2 className="animate-spin w-4 h-4" /> : <Send size={16} />}
                                 </button>
                             </div>
                         </form>
