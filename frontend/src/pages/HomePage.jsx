@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 
 import LoggedInNavbar from '../components/LoggedInNavbar';
@@ -7,6 +7,7 @@ import { useWorkoutStore } from '../store/useWorkoutStore';
 
 const HomePage = () => {
     const { feedWorkouts, isLoadingFeed, fetchFeed } = useWorkoutStore();
+    const [activeCommentsPostId, setActiveCommentsPostId] = useState(null);
 
     useEffect(() => {
         fetchFeed()
@@ -26,7 +27,12 @@ const HomePage = () => {
                 ) : feedWorkouts.length > 0 ? (
                     <div className="space-y-4">
                         {feedWorkouts.map(post => (
-                            <WorkoutPost key={post._id} post={post} />
+                            <WorkoutPost
+                                key={post._id}
+                                post={post}
+                                activeCommentsPostId={activeCommentsPostId}
+                                setActiveCommentsPostId={setActiveCommentsPostId}
+                            />
                         ))}
                     </div>
                 ) : (

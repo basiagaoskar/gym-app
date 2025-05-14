@@ -33,8 +33,7 @@ export const getCommentsForWorkout = async (workoutId) => {
     }
 
     const comments = await Comment.find({ workout: workoutId })
-        .populate("user", "username profilePic")
-        .sort({ createdAt: -1 });
+        .populate("user", "username profilePic");
 
     return comments;
 };

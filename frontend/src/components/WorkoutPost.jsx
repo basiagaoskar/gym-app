@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, ThumbsUp } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Send, Loader2, Trash2 } from 'lucide-react';
 
 import { useWorkoutStore } from '../store/useWorkoutStore';
 import { useAuthStore } from '../store/useAuthStore';
+import { useCommentStore } from '../store/useCommentStore';
 
-const WorkoutPost = ({ post }) => {
+const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) => {
     const { toggleLike } = useWorkoutStore();
     const { authUser } = useAuthStore();
+    const { comments, isLoadingComments, fetchComments, clearComments } = useCommentStore();
+
+    const [likes, setLikes] = useState(post.likes || []);
+    const showComments = activeCommentsPostId === post._id;
+    const [newCommentText, setNewCommentText] = useState("");
 
     const loggedInUserId = authUser?._id;
 
@@ -20,10 +26,20 @@ const WorkoutPost = ({ post }) => {
 
     const workoutDetailsLink = `/workout/${post._id}`;
 
-    const [likes, setLikes] = useState(post.likes || []);
-
     const isLikedByCurrentUser = loggedInUserId && likes.includes(loggedInUserId);
     const likesCount = likes.length;
+
+    useEffect(() => {
+        if (showComments && post._id) {
+            fetchComments(post._id);
+        } else {
+            clearComments();
+        }
+
+        return () => {
+            clearComments();
+        };
+    }, [showComments, post._id]);
 
     const handleLikeToggle = async (e) => {
         e.preventDefault();
@@ -39,6 +55,24 @@ const WorkoutPost = ({ post }) => {
 
         await toggleLike(post._id);
     };
+
+    const handleToggleComments = () => {
+        if (showComments) {
+            setActiveCommentsPostId(null);
+        } else {
+            setActiveCommentsPostId(post._id);
+        }
+    };
+
+    const handleAddCommentSubmit = async (e) => {
+
+    };
+
+    const handleDeleteComment = async (commentId) => {
+
+    };
+
+    const postSpecificComments = comments.filter(comment => comment.workout === post._id);
 
     return (
         <div className="card bg-base-100 shadow-md mb-4">
@@ -79,10 +113,84 @@ const WorkoutPost = ({ post }) => {
                         <ThumbsUp size={16} className={isLikedByCurrentUser ? 'fill-current' : ''} />
                         <span className="text-sm font-medium"> {likesCount}</span>
                     </button>
-                    <button className="btn btn-ghost btn-sm">
-                        <MessageSquare size={16} /> Comment
+                    <button className="btn btn-ghost btn-sm" onClick={handleToggleComments}>
+                        <MessageSquare size={16} />
+                        <span className="text-sm font-medium ml-1">
+                            Comment
+                        </span>
                     </button>
                 </div>
+
+                {showComments && (
+                    <div className=" pt-4 ">
+                        {isLoadingComments && !postSpecificComments.length ? (
+                            <div className="flex justify-center py-3">
+                                <Loader2 className="animate-spin w-6 h-6 text-primary" />
+                            </div>
+                        ) : postSpecificComments.length > 0 ? (
+                            <ul className="space-y-3 max-h-60 overflow-y-auto pr-1">
+                                {postSpecificComments.map((comment) => (
+                                    <li key={comment._id} className="bg-base-200/50 p-2.5 rounded-lg text-sm">
+                                        <div className="flex items-start gap-2.5">
+                                            <Link to={`/user/${comment.user?.username}`} className="avatar flex-shrink-0">
+                                                <div className="w-7 h-7 rounded-full overflow-hidden">
+                                                    <img src={comment.user?.profilePic || "/images/avatar.png"} alt={`${comment.user?.username || 'User'}'s avatar`} className="object-cover w-full h-full" />
+                                                </div>
+                                            </Link>
+                                            <div className="flex-grow min-w-0">
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <Link to={`/user/${comment.user?.username}`} className="font-semibold text-xs hover:underline truncate block max-w-[150px] sm:max-w-[200px]">
+                                                            {comment.user?.username || "Unknown User"}
+                                                        </Link>
+                                                        <p className="text-xs text-base-content/60">
+                                                            {new Date(comment.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+                                                        </p>
+                                                    </div>
+                                                    {(loggedInUserId === comment.user?._id || authUser?.role === 'admin') && (
+                                                        <button
+                                                            className="btn btn-ghost btn-xs btn-circle text-error/70 hover:bg-error/10"
+                                                            onClick={() => handleDeleteComment(comment._id)}
+                                                            title="Delete comment"
+                                                        >
+                                                            <Trash2 size={13} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <p className="mt-1 text-sm whitespace-pre-wrap">{comment.content}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            !isLoadingComments && <p className="text-xs text-base-content/70 text-center py-3">No comments yet. Be the first to comment!</p>
+                        )}
+
+                        <form onSubmit={handleAddCommentSubmit} className="mt-4">
+                            <div className="flex items-start gap-2">
+                                <div className="avatar flex-shrink-0 mt-1">
+                                    <div className="w-8 h-8 rounded-full overflow-hidden">
+                                        <img src={authUser?.profilePic || "/images/avatar.png"} alt="Your avatar" className="object-cover w-full h-full" />
+                                    </div>
+                                </div>
+                                <textarea
+                                    className="textarea textarea-bordered text-sm flex-grow-3 sm:!h-10 sm:!min-h-0  "
+                                    placeholder="Write a comment..."
+                                    value={newCommentText}
+                                    onChange={(e) => setNewCommentText(e.target.value)}
+                                />
+
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary flex-grow m-auto !h-20 sm:!h-10 !min-h-0"
+                                >
+                                    <Send size={16} />
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
             </div>
         </div>
     )
