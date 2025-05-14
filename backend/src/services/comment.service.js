@@ -38,3 +38,17 @@ export const getCommentsForWorkout = async (workoutId) => {
 
     return comments;
 };
+
+export const deleteComment = async (commentId, userId, userRole) => {
+    if (!mongoose.Types.ObjectId.isValid(commentId)) {
+        throw new Error("Invalid comment ID format");
+    }
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+        throw new Error("Comment not found");
+    }
+    if (comment.user.toString() !== userId.toString() && userRole !== 'admin') {
+        throw new Error("Forbidden – You are not allowed to delete this comment");
+    }
+    await Comment.findByIdAndDelete(commentId);
+};

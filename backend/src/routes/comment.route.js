@@ -1,6 +1,6 @@
 import express from 'express';
 import { protectRoute } from '../middleware/auth.middleware.js';
-import { addComment, getWorkoutComments } from '../controllers/comment.controller.js';
+import { addComment, getWorkoutComments, removeComment } from '../controllers/comment.controller.js';
 
 const router = express.Router();
 
@@ -82,5 +82,35 @@ router.post('/:workoutId', protectRoute, addComment);
  *         description: Unauthorized
  */
 router.get('/:workoutId', protectRoute, getWorkoutComments);
+
+/**
+ * @swagger
+ * /comments/{commentId}:
+ *   delete:
+ *     tags: [Comments]
+ *     summary: Delete a comment
+ *     description: Deletes a comment by ID. Only the comment author or an admin can delete it.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - name: commentId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the comment to delete
+ *     responses:
+ *       200:
+ *         description: Comment deleted successfully
+ *       400:
+ *         description: Invalid comment ID format
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden – not allowed to delete this comment
+ *       404:
+ *         description: Comment not found
+ */
+router.delete('/:commentId', protectRoute, removeComment);
 
 export default router;
