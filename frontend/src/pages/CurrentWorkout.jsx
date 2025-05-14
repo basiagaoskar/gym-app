@@ -1,19 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, ArrowLeft, Edit3, Plus, Search } from 'lucide-react';
+import { X, ArrowLeft, Edit3, Plus, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { useCurrentWorkoutStore } from "../store/useCurrentWorkoutStore";
 import LoggedInNavbar from "../components/LoggedInNavbar";
 
 const CurrentWorkoutPage = () => {
     const { currentWorkout, exercises, startWorkout, getExercises, addExercise, removeExercise, addSetToExercise, updateWorkoutTitle, endWorkout } = useCurrentWorkoutStore()
     const [searchQuery, setSearchQuery] = useState("")
+    const [currentInstruction, setCurrentInstruction] = useState(null);
     const modalRef = useRef(null);
     const navigate = useNavigate()
 
     useEffect(() => {
         getExercises()
         startWorkout()
-    }, []);
+    }, [getExercises, startWorkout]);
 
     function handleSelectExercise(exercise) {
         addExercise(exercise)
@@ -31,6 +32,10 @@ const CurrentWorkoutPage = () => {
 
     function handleSearchChange(e) {
         setSearchQuery(e.target.value.toLowerCase())
+    }
+
+    function handleDisplayInstruction(exerciseId) {
+        setCurrentInstruction(prevId => (prevId === exerciseId ? null : exerciseId));
     }
 
     async function handleFinishWorkout() {
@@ -61,7 +66,7 @@ const CurrentWorkoutPage = () => {
                         <span className="hidden sm:inline">Back</span>
                         <span className="sm:hidden"><ArrowLeft className="w-5 h-5" /></span>
                     </button>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center hidden sm:block whitespace-nowrap  px-2">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center hidden sm:block whitespace-nowrap px-2">
                         Current Workout
                     </h1>
                     <button className="btn btn-success btn-sm sm:btn-md" onClick={handleFinishWorkout} disabled={currentWorkout.exercises.length === 0}>
@@ -74,6 +79,7 @@ const CurrentWorkoutPage = () => {
                         type="text"
                         placeholder="Workout Title (e.g., Monday Push)"
                         className="input w-full text-center text-lg font-semibold"
+                        value={currentWorkout.title || ""}
                         onChange={(e) => updateWorkoutTitle(e.target.value)}
                     />
                     <Edit3 className="w-5 h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-base-content/40 pointer-events-none" />
@@ -99,16 +105,39 @@ const CurrentWorkoutPage = () => {
                                             </div>
                                         </div>
                                         <div className="min-w-0">
-                                            <h3 className="text-lg md:text-xl font-bold truncate">{exercise.title}</h3>
-                                            <p className="text-xs md:text-sm text-base-content/70 capitalize">
-                                                {exercise.muscle_groups.primary}
-                                            </p>
+                                            <div onClick={() => handleDisplayInstruction(exercise._id)} className="cursor-pointer group">
+                                                <h3 className="text-lg md:text-xl font-bold truncate group-hover:text-primary transition-colors">
+                                                    {exercise.title}
+                                                    {currentInstruction === exercise._id
+                                                        ? <ChevronUp size={18} className="inline-block ml-1 text-primary" />
+                                                        : <ChevronDown size={18} className="inline-block ml-1 text-base-content/60 group-hover:text-primary" />
+                                                    }
+                                                </h3>
+                                                <p className="text-xs md:text-sm text-base-content/70 capitalize">
+                                                    {exercise.muscle_groups.primary}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <button className="btn btn-ghost btn-sm btn-circle text-error/70 hover:bg-error/10 flex-shrink-0" onClick={() => removeExercise(exercise._id)}>
+                                    <button className="btn btn-ghost btn-sm btn-circle text-error/70 hover:bg-error/10 flex-shrink-0 self-start" onClick={() => removeExercise(exercise._id)}>
                                         <X size={20} />
                                     </button>
                                 </div>
+
+                                {currentInstruction === exercise._id && (
+                                    <div className="mt-2 mb-3 p-3 bg-base-200/50 rounded-md">
+                                        <h5 className="font-semibold text-sm mb-1">Instructions:</h5>
+                                        <ol className="list-decimal list-inside text-xs text-base-content/80">
+                                            {exercise.instructions && exercise.instructions.length > 0 ? (
+                                                exercise.instructions.map((text, index) => (
+                                                    <li key={index}>{text}</li>
+                                                ))
+                                            ) : (
+                                                <li>No instructions available.</li>
+                                            )}
+                                        </ol>
+                                    </div>
+                                )}
 
                                 <h4 className="font-semibold mb-2 text-sm">Sets:</h4>
                                 {exercise.sets && exercise.sets.length > 0 ? (
@@ -181,26 +210,26 @@ const CurrentWorkoutPage = () => {
 
                         <ul className="space-y-2 h-[50vh] overflow-y-auto pr-1">
                             {filteredExercises.length > 0 ? filteredExercises
-                            .sort((a,b) => a.muscle_groups.primary.localeCompare(b.muscle_groups.primary))
-                            .map((exercise) => (
-                                <li
-                                    key={exercise._id}
-                                    onClick={() => handleSelectExercise(exercise)}
-                                    className="flex items-center justify-between gap-3 p-3 border border-transparent rounded-lg cursor-pointer hover:bg-base-200 transition-colors duration-150"
-                                >
-                                    <div className="flex-grow min-w-0">
-                                        <h4 className="text-base font-bold truncate">{exercise.title}</h4>
-                                        <p className="text-xs text-base-content/70 capitalize">
-                                            {exercise.muscle_groups.primary}
-                                        </p>
-                                    </div>
-                                    <div className="avatar flex-shrink-0">
-                                        <div className="w-15 h-15 rounded-lg bg-base-200 flex items-center justify-center overflow-hidden">
-                                            <img src={exercise.video_url} alt={exercise.title} className="object-cover w-full h-full" />
+                                .sort((a,b) => a.muscle_groups.primary.localeCompare(b.muscle_groups.primary))
+                                .map((exercise) => (
+                                    <li
+                                        key={exercise._id}
+                                        onClick={() => handleSelectExercise(exercise)}
+                                        className="flex items-center justify-between gap-3 p-3 border border-transparent rounded-lg cursor-pointer hover:bg-base-200 transition-colors duration-150"
+                                    >
+                                        <div className="flex-grow min-w-0">
+                                            <h4 className="text-base font-bold truncate">{exercise.title}</h4>
+                                            <p className="text-xs text-base-content/70 capitalize">
+                                                {exercise.muscle_groups.primary}
+                                            </p>
                                         </div>
-                                    </div>
-                                </li>
-                            )) : (
+                                        <div className="avatar flex-shrink-0">
+                                            <div className="w-15 h-15 rounded-lg bg-base-200 flex items-center justify-center overflow-hidden">
+                                                <img src={exercise.video_url} alt={exercise.title} className="object-cover w-full h-full" />
+                                            </div>
+                                        </div>
+                                    </li>
+                                )) : (
                                 <p className="text-center text-base-content/60 py-4">No matching exercises found.</p>
                             )}
                         </ul>
