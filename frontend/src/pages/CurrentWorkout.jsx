@@ -160,7 +160,7 @@ const CurrentWorkoutPage = () => {
                 </button>
 
                 <dialog ref={modalRef} id="add_exercise_modal" className="modal modal-bottom sm:modal-middle">
-                    <div className="modal-box max-w-lg">
+                    <div className="modal-box max-w md:max-w-lg">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-bold text-xl md:text-2xl">Select an Exercise</h3>
                             <form method="dialog">
@@ -180,7 +180,9 @@ const CurrentWorkoutPage = () => {
                         </div>
 
                         <ul className="space-y-2 h-[50vh] overflow-y-auto pr-1">
-                            {filteredExercises.length > 0 ? filteredExercises.map((exercise) => (
+                            {filteredExercises.length > 0 ? filteredExercises
+                            .sort((a,b) => a.muscle_groups.primary.localeCompare(b.muscle_groups.primary))
+                            .map((exercise) => (
                                 <li
                                     key={exercise._id}
                                     onClick={() => handleSelectExercise(exercise)}
@@ -193,7 +195,7 @@ const CurrentWorkoutPage = () => {
                                         </p>
                                     </div>
                                     <div className="avatar flex-shrink-0">
-                                        <div className="w-12 h-12 rounded-lg bg-base-200 flex items-center justify-center overflow-hidden">
+                                        <div className="w-15 h-15 rounded-lg bg-base-200 flex items-center justify-center overflow-hidden">
                                             <img src={exercise.video_url} alt={exercise.title} className="object-cover w-full h-full" />
                                         </div>
                                     </div>
