@@ -119,7 +119,14 @@ This project is most easily set up using Docker Compose. This method will build 
         * `JWT_SECRET`: A secret key used to sign and verify JSON Web Tokens for authentication.
         * `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`: Credentials for the Cloudinary service (image uploads).
         * `PORT`: The port on which the backend server listens for requests.
-    * Location: `backend/src/lib/db.js` (MongoDB connection uses `MONGO_URI`), `backend/src/services/auth.service.js` (JWT signing uses `JWT_SECRET`)
+        * `SMTP_HOST`: SMTP host for sending emails (e.g., `smtp.ethereal.email`).
+        * `SMTP_USER`: Username for SMTP authentication.
+        * `SMTP_PASS`: Password for SMTP authentication.
+    * Location:
+        * `backend/src/lib/db.js` (MongoDB connection uses `MONGO_URI`)
+        * `backend/src/services/auth.service.js` (JWT signing uses `JWT_SECRET`)
+        * `backend/src/lib/cloudinary.js` (Cloudinary configuration uses `CLOUDINARY_*` variables)
+        * `backend/src/services/email.service.js` or `backend/src/user.consumer.js` (Email sending uses `SMTP_*` variables)
 
 * **Backend Testing:**
     * The backend includes unit tests written using the Jest testing framework.
