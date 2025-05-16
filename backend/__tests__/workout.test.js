@@ -232,22 +232,25 @@ describe('Workout API Endpoints', () => {
 
             const res = await agent.get('/api/workout/feed');
             expect(res.statusCode).toBe(200);
-            expect(Array.isArray(res.body)).toBe(true);
-            expect(res.body.length).toBe(3);
+            expect(typeof res.body).toBe('object');
+            expect(Array.isArray(res.body.workouts)).toBe(true);
+            expect(res.body.workouts.length).toBe(3);
+            expect(res.body).toHaveProperty('currentPage', 1);
+            expect(res.body).toHaveProperty('hasMore', false);
 
-            const workoutIds = res.body.map(w => w._id.toString());
+            const workoutIds = res.body.workouts.map(w => w._id.toString());
             expect(workoutIds).toContain(workoutUser1_1._id.toString());
             expect(workoutIds).toContain(workoutUser1_2._id.toString());
             expect(workoutIds).toContain(workoutUser2_1._id.toString());
 
-            expect(res.body[0].user).toHaveProperty('username');
-            expect(res.body[0].exercises[0].exercise).toHaveProperty('title');
-            expect(res.body[0]).toHaveProperty('likes');
+            expect(res.body.workouts[0].user).toHaveProperty('username');
+            expect(res.body.workouts[0].exercises[0].exercise).toHaveProperty('title');
+            expect(res.body.workouts[0]).toHaveProperty('likes');
 
-            const timestamps = res.body.map(w => new Date(w.createdAt).getTime());
+            const timestamps = res.body.workouts.map(w => new Date(w.createdAt).getTime());
             expect(timestamps[0]).toBeGreaterThanOrEqual(timestamps[1]);
             expect(timestamps[1]).toBeGreaterThanOrEqual(timestamps[2]);
-            expect(res.body[0]._id.toString()).toBe(workoutUser1_2._id.toString());
+            expect(res.body.workouts[0]._id.toString()).toBe(workoutUser1_2._id.toString());
         });
 
         it('should return only own workouts if not following anyone (200)', async () => {
@@ -263,8 +266,11 @@ describe('Workout API Endpoints', () => {
 
             const res = await agent.get('/api/workout/feed');
             expect(res.statusCode).toBe(200);
-            expect(res.body.length).toBe(2);
-            const workoutIds = res.body.map(w => w._id.toString());
+            expect(typeof res.body).toBe('object');
+            expect(Array.isArray(res.body.workouts)).toBe(true);
+            expect(res.body.workouts.length).toBe(2);
+            expect(res.body).toHaveProperty('hasMore', false);
+            const workoutIds = res.body.workouts.map(w => w._id.toString());
             expect(workoutIds).toContain(workoutUser1_1._id.toString());
             expect(workoutIds).toContain(workoutUser1_2._id.toString());
         });
