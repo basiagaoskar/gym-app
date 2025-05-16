@@ -109,7 +109,7 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
                         </div>
                     )}
                     {exerciseSummary && (
-                        <p className="mt-1"><span className="font-medium">Exercises:</span> {exerciseSummary}</p>
+                        <p className="mt-1 hidden sm:block"><span className="font-medium">Exercises:</span> {exerciseSummary}</p>
                     )}
                 </div>
 
@@ -130,7 +130,7 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
                 </div>
 
                 {showComments && (
-                    <div className=" pt-4 ">
+                    <div className="pt-4 border-t border-base-content/10">
                         {isLoadingComments && !postSpecificComments.length ? (
                             <div className="flex justify-center py-3">
                                 <Loader2 className="animate-spin w-6 h-6 text-primary" />
@@ -147,11 +147,11 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
                                             </Link>
                                             <div className="flex-grow min-w-0">
                                                 <div className="flex items-center justify-between">
-                                                    <div>
+                                                    <div className='flex gap-1.5'>
                                                         <Link to={`/user/${comment.user?.username}`} className="font-semibold text-xs hover:underline truncate block max-w-[150px] sm:max-w-[200px]">
                                                             {comment.user?.username || "Unknown User"}
                                                         </Link>
-                                                        <p className="text-xs text-base-content/60">
+                                                        <p className="text-xs text-base-content/60 hidden sm:block">
                                                             {new Date(comment.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
                                                         </p>
                                                     </div>
@@ -188,11 +188,18 @@ const WorkoutPost = ({ post, activeCommentsPostId, setActiveCommentsPostId }) =>
                                     value={newCommentText}
                                     onChange={(e) => setNewCommentText(e.target.value)}
                                     disabled={isAddingComment}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleAddCommentSubmit(e);
+                                        }
+                                    }
+                                }
                                 />
 
                                 <button
                                     type="submit"
-                                    className="btn btn-primary flex-grow m-auto !h-20 sm:!h-10 !min-h-0"
+                                    className="btn btn-primary flex-grow m-auto !h-10 !min-h-0 hidden sm:flex"
                                     disabled={isAddingComment || !newCommentText.trim()}
                                 >
                                     {isAddingComment ? <Loader2 className="animate-spin w-4 h-4" /> : <Send size={16} />}
