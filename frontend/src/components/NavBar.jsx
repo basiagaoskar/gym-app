@@ -76,7 +76,7 @@ function NavBar() {
             text-xl xl:hidden transition-all duration-300 ${showMenu ? "opacity-100 max-h-screen" : "opacity-0 max-h-0"}`}>
                 <X className='absolute top-5 right-8 text-primary-content cursor-pointer text-3xl' onClick={toggleMenu} />
                 <div className='text-primary-content flex flex-col items-center gap-8 text-2xl'>
-                    {["about", "discover", "services", "signup"].map((section) => (
+                    {["about", "discover", "services", "sign up"].map((section) => (
                         <ScrollLink
                             key={section}
                             to={section}

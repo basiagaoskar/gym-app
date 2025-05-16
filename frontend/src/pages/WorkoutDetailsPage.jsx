@@ -34,17 +34,17 @@ const WorkoutDetailsPage = () => {
 
                 {workout && workout._id === workoutId && workout.exercises ? (
                     <>
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex justify-between items-center">
 
                             <h1 className="text-3xl md:text-4xl font-bold mb-2">{workout.title || "Workout Details"}</h1>
                             {isOwnWorkout && (
-                                <div className="btn btn-outline btn-error w-auto" onClick={handleDeleteWorkout}>
+                                <div className="btn btn-outline btn-error w-auto p-2" onClick={handleDeleteWorkout}>
                                     <Trash2 />
                                 </div>
                             )}
                         </div>
                         <p className="text-sm mb-6 text-base-content/70">
-                            Date: {new Date(workout.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                            {new Date(workout.startTime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                         </p>
 
                         <h2 className="text-2xl font-semibold mb-4 border-b border-base-content/10 pb-2">Exercises</h2>
@@ -53,7 +53,7 @@ const WorkoutDetailsPage = () => {
                                 {workout.exercises.map((exerciseData) => (
                                     <li key={exerciseData._id || exerciseData.exercise._id} className="p-4 rounded-lg shadow-md bg-base-100">
                                         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center">
-                                            <div className="avatar flex-shrink-0">
+                                            <div className="avatar flex-shrink-0  hidden sm:block">
                                                 <div className="w-24 h-24 rounded-lg bg-base-200 flex items-center justify-center">
                                                     <img src={exerciseData.exercise.video_url} alt={exerciseData.exercise.title} className="object-cover w-full h-full" />
                                                 </div>
@@ -63,9 +63,9 @@ const WorkoutDetailsPage = () => {
                                                 <p className="text-sm text-base-content/70 mt-1 capitalize">
                                                     Primary Muscle: {exerciseData.exercise.muscle_groups.primary}
                                                     {Array.isArray(exerciseData.exercise.muscle_groups.secondary) && exerciseData.exercise.muscle_groups.secondary.length > 0 && (
-                                                        <span className="ml-2">
-                                                            | Secondary: {exerciseData.exercise.muscle_groups.secondary.join(', ')}
-                                                        </span>
+                                                        <p>
+                                                            Secondary: {exerciseData.exercise.muscle_groups.secondary.join(', ')}
+                                                        </p>
                                                     )}
                                                 </p>
                                             </div>
