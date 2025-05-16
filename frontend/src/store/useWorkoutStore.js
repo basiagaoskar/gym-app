@@ -7,6 +7,9 @@ export const useWorkoutStore = create((set) => ({
     workout: null,
 
     feedWorkouts: [],
+    currentPage: 1,
+    totalPages: 1,
+    hasMoreFeed: true,
     isLoadingFeed: false,
 
     profileWorkouts: [],
@@ -22,17 +25,35 @@ export const useWorkoutStore = create((set) => ({
         }
     },
 
-    fetchFeed: async () => {
-        set({ isLoadingFeed: true });
+    fetchFeed: async (page) => {
+        if (page === 1) {
+            set({ isLoadingFeed: true, feedWorkouts: [], currentPage: 1, hasMoreFeed: true });
+        } else {
+            set({ isFetchingMoreFeed: true });
+        }
+
         try {
-            const res = await axiosInstance.get('/workout/feed');
-            set({ feedWorkouts: res.data });
+            const res = await axiosInstance.get(`/workout/feed?page=${page}`);
+            const { workouts, totalPages, currentPage: newCurrentPage, hasMore } = res.data;
+
+            set((state) => ({
+                feedWorkouts: page === 1 ? workouts : [...state.feedWorkouts, ...workouts],
+                currentPage: newCurrentPage,
+                totalPages,
+                hasMoreFeed: hasMore,
+            }));
         } catch (error) {
             console.error("Error in fetchFeed: ", error);
-            toast.error(error.response.data.message);
-            set({ feedWorkouts: [] });
+            toast.error(error.response?.data?.message || "Failed to fetch feed");
+            if (page === 1) {
+                set({ feedWorkouts: [], hasMoreFeed: false });
+            }
         } finally {
-            set({ isLoadingFeed: false });
+            if (page === 1) {
+                set({ isLoadingFeed: false });
+            } else {
+                set({ isFetchingMoreFeed: false });
+            }
         }
     },
 
