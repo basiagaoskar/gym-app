@@ -70,15 +70,13 @@ function SettingsPage() {
 
     function handlePasswordSubmit(e) {
         e.preventDefault()
-        console.log(passwordData)
-
-        const success = validatePassword()
-        if (success === true) updatePassword(passwordData)
+        if (validatePassword()) updatePassword(passwordData)
     }
+
     return (
         <>
             <LoggedInNavbar />
-            <div className="min-h-screen bg-primary text-base-content flex items-center justify-center">
+            <div className="min-h-screen bg-primary text-base-content flex items-center justify-center py-10">
                 <div className="m-3 p-5 md:p-10 bg-base-300 rounded-lg shadow-lg flex flex-col gap-6 w-full max-w-7xl my-auto h-190 md:h-210">
                     <h1 className="text-4xl font-bold">Settings</h1>
 
@@ -103,7 +101,7 @@ function SettingsPage() {
                         )}
 
                         {/* Desktop sidebar */}
-                        <aside className={`w-full md:w-40 hidden md:block`}>
+                        <aside className="w-full md:w-40 hidden md:block">
                             <ul className="space-y-2">
                                 {settingsOptions.map((option) => (
                                     <li key={option.text}>
@@ -120,8 +118,8 @@ function SettingsPage() {
                         </aside>
                         {activeTab === 'null' && (
                             <div className="hidden md:flex flex-col items-center justify-center w-full h-[calc(100vh-50vh)] text-center">
-                                <Settings className="w-70 h-70 text-neutral" />
-                                <p className="text-2xl text-neutral mt-10">Select an option from the left menu</p>
+                                <Settings className="w-70 h-70 text-neutral-content/50" />
+                                <p className="text-2xl text-neutral-content/50 mt-10">Select an option from the left menu</p>
                             </div>
                         )}
 
@@ -292,7 +290,7 @@ function SettingsPage() {
                         )}
                     </div>
                 </div>
-            </div >
+            </div>
         </>
     )
 }
