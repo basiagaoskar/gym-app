@@ -30,8 +30,9 @@ export const toggleLikeWorkout = async (req, res, next) => {
 
 export const getFeed = async (req, res, next) => {
     const userId = req.user._id;
+    const page = parseInt(req.query.page) || 1;
     try {
-        const feedWorkouts = await getFollowingWorkoutFeed(userId);
+        const feedWorkouts = await getFollowingWorkoutFeed(userId, page);
         res.status(200).json(feedWorkouts);
     } catch (error) {
         next(error);

@@ -39,16 +39,28 @@ export const likeWorkout = async (workoutId, userId) => {
     return workout;
 };
 
-export const getFollowingWorkoutFeed = async (userId) => {
+export const getFollowingWorkoutFeed = async (userId, page = 1) => {
     const followingRelations = await Follow.find({ follower: userId });
     const followingIds = followingRelations.map(rel => rel.following);
     followingIds.push(userId);
 
-    return await Workout.find({ user: { $in: followingIds } })
+    const limit = 5;
+    const skip = (page - 1) * limit;
+    const workouts = await Workout.find({ user: { $in: followingIds } })
         .sort({ createdAt: -1 })
-        .limit(50)
+        .skip(skip)
+        .limit(limit)
         .populate("user", "username profilePic")
         .populate("exercises.exercise", "title");
+    
+    const totalWorkouts = await Workout.countDocuments({ user: { $in: followingIds } });
+
+    return {
+        workouts,
+        totalPages: Math.ceil(totalWorkouts / limit),
+        currentPage: page,
+        hasMore: page * limit < totalWorkouts
+    };
 };
 
 export const getUserWorkouts = async (userId) => {
