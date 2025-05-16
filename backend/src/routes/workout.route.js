@@ -17,13 +17,39 @@ const router = express.Router()
  *   get:
  *     tags: [Workouts]
  *     summary: Get workout feed from followed users
+ *     description: Returns a paginated feed of workouts created by the logged-in user and users they follow.
  *     security:
  *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination (default is 1)
  *     responses:
  *       200:
- *         description: List of workouts from followed users
+ *         description: Paginated list of workouts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 workouts:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/definitions/WorkoutDetail'
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 3
+ *                 currentPage:
+ *                   type: integer
+ *                   example: 1
+ *                 hasMore:
+ *                   type: boolean
+ *                   example: true
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized – user must be logged in
  */
 router.get('/feed', protectRoute, getFeed);
 
@@ -42,6 +68,8 @@ router.get('/feed', protectRoute, getFeed);
  *     responses:
  *       200:
  *         description: Workout details
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: Workout not found
  */

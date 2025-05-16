@@ -35,8 +35,10 @@ router.post('/signup', signup)
  * @swagger
  * /auth/login:
  *   post:
- *     tags: [Auth]
+ *     tags:
+ *       - Auth
  *     summary: Log in a user
+ *     description: Log in with email and password
  *     requestBody:
  *       required: true
  *       content:
@@ -46,6 +48,15 @@ router.post('/signup', signup)
  *     responses:
  *       200:
  *         description: Logged in successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/definitions/UserResponse'
  *       400:
  *         description: Invalid credentials
  */
@@ -141,6 +152,8 @@ router.get("/check", protectRoute, checkAuth)
  *     responses:
  *       200:
  *         description: User data
+ *       401:
+ *         description: Unauthorized
  */
 router.get("/user/:username", protectRoute, findUser)
 
@@ -166,9 +179,11 @@ router.get("/user/:username", protectRoute, findUser)
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/User'
+ *                 $ref: '#/definitions/UserResponse'
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: No matching users found
  */

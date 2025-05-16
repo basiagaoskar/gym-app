@@ -74,10 +74,12 @@ router.delete('/unfollow/:userIdToUnfollow', protectRoute, unfollowUser);
  *     responses:
  *       200:
  *         description: List of followed users
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: User not found
  */
-router.get('/following/:userId', getFollowingList);
+router.get('/following/:userId', protectRoute, getFollowingList);
 
 /**
  * @swagger
@@ -94,9 +96,11 @@ router.get('/following/:userId', getFollowingList);
  *     responses:
  *       200:
  *         description: List of followers
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: User not found
  */
-router.get('/followers/:userId', getFollowersList);
+router.get('/followers/:userId', protectRoute, getFollowersList);
 
 export default router;

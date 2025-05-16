@@ -29,7 +29,7 @@ const router = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/User'
+ *                 $ref: '#/definitions/UserResponse'
  *       401:
  *         description: Unauthorized
  *       403:
