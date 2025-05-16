@@ -133,7 +133,25 @@ const swaggerDefinition = {
         error: { type: "string", example: "Error message" },
         status: { type: "number", example: 400 }
       }
-    }
+    },
+    UpdateUserInput: {
+      type: "object",
+      properties: {
+        username: { type: "string", example: "updatedUser" },
+        role: { type: "string", enum: ["user", "admin"], example: "admin" }
+      }
+    },
+    Comment: {
+      type: "object",
+      properties: {
+        _id: { type: "string", example: "60d..." },
+        user: { "$ref": "#/definitions/UserResponse" },
+        workout: { type: "string", description: "ID of the workout", example: "60c..." },
+        content: { type: "string", example: "Great workout!" },
+        createdAt: { type: "string", format: "date-time" },
+        updatedAt: { type: "string", format: "date-time" }
+      }
+    },
   }
 };
 
