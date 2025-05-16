@@ -18,11 +18,7 @@ const login = async (email, password) => {
 
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    await mongoose.connect(mongoServer.getUri());
 
     const user1 = { username: 'us1', email: 'us1@example.com', password: 'Password123' };
     const user2 = { username: 'us2', email: 'us2@example.com', password: 'Password123' };
