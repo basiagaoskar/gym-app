@@ -26,8 +26,7 @@ export const useAdminStore = create((set) => ({
             }));
             toast.success('User updated successfully');
         } catch (error) {
-            toast.error('Could not update user');
-            console.error('Error in updateUser: ', error);
+            toast.error(error.response?.data?.message);
         }
     },
 
@@ -39,7 +38,7 @@ export const useAdminStore = create((set) => ({
             })));
             toast.success('User deleted successfully');
         } catch (error) {
-            console.error('Error in deleteUser: ', error);
+            toast.error(error.response?.data?.message);
         }
     },
 }));
