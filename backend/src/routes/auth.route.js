@@ -22,7 +22,7 @@ const router = express.Router()
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/SignupInput'
+ *             $ref: '#/components/schemas/SignupInput'
  *     responses:
  *       201:
  *         description: User successfully created
@@ -44,7 +44,7 @@ router.post('/signup', signup)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/LoginInput'
+ *             $ref: '#/components/schemas/LoginInput'
  *     responses:
  *       200:
  *         description: Logged in successfully
@@ -56,7 +56,7 @@ router.post('/signup', signup)
  *                 message:
  *                   type: string
  *                 user:
- *                   $ref: '#/definitions/UserResponse'
+ *                   $ref: '#/components/schemas/UserResponse'
  *       400:
  *         description: Invalid credentials
  */
@@ -86,7 +86,7 @@ router.post('/logout', logout)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/UpdateProfileInput'
+ *             $ref: '#/components/schemas/UpdateProfileInput'
  *     responses:
  *       200:
  *         description: Profile updated
@@ -110,7 +110,7 @@ router.put("/update-profile", protectRoute, updateProfile)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/UpdatePasswordInput'
+ *             $ref: '#/components/schemas/UpdatePasswordInput'
  *     responses:
  *       200:
  *         description: Password updated
@@ -179,7 +179,7 @@ router.get("/user/:username", protectRoute, findUser)
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/UserResponse'
+ *                 $ref: '#/components/schemas/UserResponse'
  *       400:
  *         description: Invalid input
  *       401:

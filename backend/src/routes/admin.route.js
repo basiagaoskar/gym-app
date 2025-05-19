@@ -29,7 +29,7 @@ const router = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/UserResponse'
+ *                 $ref: '#/components/schemas/UserResponse'
  *       401:
  *         description: Unauthorized
  *       403:
@@ -58,7 +58,7 @@ router.get('/users', protectRoute, isAdmin, getAllUsers);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/UpdateUserInput'
+ *             $ref: '#/components/schemas/UpdateUserInput'
  *     responses:
  *       200:
  *         description: User updated successfully

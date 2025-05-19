@@ -23,7 +23,7 @@ const router = express.Router()
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/Exercise'
+ *                 $ref: '#/components/schemas/Exercise'
  */
 router.get("/all-exercises", getAllExercises)
 

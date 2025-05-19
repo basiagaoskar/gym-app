@@ -38,7 +38,7 @@ const router = express.Router()
  *                 workouts:
  *                   type: array
  *                   items:
- *                     $ref: '#/definitions/WorkoutDetail'
+ *                     $ref: '#/components/schemas/WorkoutDetail'
  *                 totalPages:
  *                   type: integer
  *                   example: 3
@@ -112,7 +112,7 @@ router.get('/user/:userId', protectRoute, getAllUserWorkouts)
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/WorkoutInput'
+ *             $ref: '#/components/schemas/WorkoutInput'
  *     responses:
  *       201:
  *         description: Workout saved successfully

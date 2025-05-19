@@ -35,13 +35,17 @@ const router = express.Router();
  *             type: object
  *             required:
  *               - content
+ *             properties: 
+ *                 content:
+ *                   type: string
+ *                   example: "Great workout session!"
  *     responses:
  *       201:
  *         description: Comment successfully added
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/definitions/Comment'
+ *               $ref: '#/components/schemas/Comment'
  *       400:
  *         description: Invalid request data (e.g. empty content or malformed workoutId)
  *       401:
@@ -75,7 +79,7 @@ router.post('/:workoutId', protectRoute, addComment);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/definitions/Comment'
+ *                 $ref: '#/components/schemas/Comment'
  *       400:
  *         description: Invalid workout ID format
  *       401:
