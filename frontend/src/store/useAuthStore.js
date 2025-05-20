@@ -26,7 +26,9 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get("/auth/check")
             set({ authUser: res.data })
         } catch (error) {
-            console.log("Error in checkAuth: ", error)
+            if (error.response?.status === 401) {
+                toast.error(error.response.data?.error || 'Your session has expired. Please log in again.');
+            }
             set({ authUser: null })
         } finally {
             set({ isCheckingAuth: false })
@@ -111,7 +113,6 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get(`/auth/user/${username}`)
             set({ profile: res.data })
         } catch (error) {
-            console.log("Error in findUser: ", error)
             set({ profile: null })
         } finally {
             set({ isSearchingProfile: false })
@@ -124,7 +125,6 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get(`/auth/search/${username}`)
             set({ foundProfiles: res.data })
         } catch (error) {
-            console.log("Error in searchProfile: ", error)
             set({ foundProfiles: [] })
         } finally {
             set({ isSearchingUser: false })
@@ -185,7 +185,6 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get(`/follow/followers/${userId}`);
             set({ followersList: res.data });
         } catch (error) {
-            console.log("Error in fetchFollowers: ", error);
             set({ followersList: [] });
         } finally {
             set({ isLoadingFollowers: false });
@@ -198,7 +197,6 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get(`/follow/following/${userId}`);
             set({ followingList: res.data });
         } catch (error) {
-            console.log("Error in fetchFollowing: ", error);
             set({ followingList: [] });
         } finally {
             set({ isLoadingFollowers: false });

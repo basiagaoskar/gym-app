@@ -43,8 +43,6 @@ export const useWorkoutStore = create((set) => ({
                 hasMoreFeed: hasMore,
             }));
         } catch (error) {
-            console.error("Error in fetchFeed: ", error);
-            toast.error(error.response?.data?.message || "Failed to fetch feed");
             if (page === 1) {
                 set({ feedWorkouts: [], hasMoreFeed: false });
             }
@@ -64,7 +62,6 @@ export const useWorkoutStore = create((set) => ({
             const res = await axiosInstance.get(`/workout/user/${userId}`)
             set({ profileWorkouts: res.data })
         } catch (error) {
-            console.error("Error in fetchProfileWorkouts: ", error)
             toast.error(error.response.data.message)
             set({ profileWorkouts: [] })
         } finally {
@@ -78,7 +75,6 @@ export const useWorkoutStore = create((set) => ({
 
         const workout = await axiosInstance.get(`/workout/${workoutId}`);
         if (!workout) {
-            console.error("Workout not found for ID:", workoutId);
             return;
         }
 
