@@ -38,17 +38,17 @@ function App() {
     <>
       <div data-theme={theme} >
         <Routes>
-          <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/start" />} />
-          <Route path="/start" element={<StartPage />} />
-          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+          <Route path="/" element={<StartPage />} />
+          <Route path="/home" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/home" />} />
+          <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/home" />} />
           <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
           <Route path="/routines" element={authUser ? <WorkoutPlansPage /> : <Navigate to="/login" />} />
           <Route path="/user/:username" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/current-workout" element={authUser ? <CurrentWorkoutPage /> : <Navigate to="/login" />} />
-          <Route path="/workout/:workoutId" element={authUser ? <WorkoutDetailsPage /> : <Navigate to="login" />} />
+          <Route path="/workout/:workoutId" element={authUser ? <WorkoutDetailsPage /> : <Navigate to="/login" />} />
 
-          <Route path="/admin" element={authUser && authUser.role === 'admin' ? <AdminPage /> : <Navigate to="login" />} />
+          <Route path="/admin" element={authUser && authUser.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes >
