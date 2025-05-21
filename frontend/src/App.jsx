@@ -21,12 +21,16 @@ import WorkoutPlansPage from './pages/WorkoutPlansPage';
 function App() {
   const { theme } = useThemeStore();
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
+  const privatePaths = ['/home', '/settings', '/routines', '/user/:username', '/current-workout', '/workout/:workoutId', '/admin'];
+  const isPrivatePath = privatePaths.includes(useLocation().pathname);
 
   useEffect(() => {
-    checkAuth()
+    if (isPrivatePath) {
+      checkAuth()
+    }
   }, [useLocation().pathname, checkAuth])
 
-  if (isCheckingAuth && !authUser) {
+  if (isCheckingAuth && !authUser && isPrivatePath) {
     return (
       <div data-theme={theme} className='bg-base-200 flex items-center justify-center h-screen'>
         <Loader2 className='size-10 animate-spin' />

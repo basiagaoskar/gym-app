@@ -20,14 +20,16 @@ export const useAuthStore = create((set) => ({
     followersList: [],
     followingList: [],
     isLoadingFollowers: false,
+    isLoadingFollowing: false,
 
     checkAuth: async () => {
+        set({ isCheckingAuth: true })
         try {
             const res = await axiosInstance.get("/auth/check")
             set({ authUser: res.data })
         } catch (error) {
             if (error.response?.status === 401) {
-                toast.error(error.response.data?.error || 'Your session has expired. Please log in again.');
+                toast.error(error.response.data?.message);
             }
             set({ authUser: null })
         } finally {
@@ -192,14 +194,14 @@ export const useAuthStore = create((set) => ({
     },
 
     fetchFollowing: async (userId) => {
-        set({ isLoadingFollowers: true });
+        set({ isLoadingFollowing: true });
         try {
             const res = await axiosInstance.get(`/follow/following/${userId}`);
             set({ followingList: res.data });
         } catch (error) {
             set({ followingList: [] });
         } finally {
-            set({ isLoadingFollowers: false });
+            set({ isLoadingFollowing: false });
         }
     },
 }))

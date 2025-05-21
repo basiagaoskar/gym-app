@@ -62,7 +62,6 @@ export const useWorkoutStore = create((set) => ({
             const res = await axiosInstance.get(`/workout/user/${userId}`)
             set({ profileWorkouts: res.data })
         } catch (error) {
-            toast.error(error.response.data.message)
             set({ profileWorkouts: [] })
         } finally {
             set({ isLoadingProfileWorkouts: false })
