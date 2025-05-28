@@ -12,17 +12,14 @@ beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri());
 
-    // Create user 1
     user1Agent = request.agent(app);
     const res1 = await user1Agent.post('/api/auth/signup').send({ username: 'userFollow1', email: 'follow1@example.com', password: 'Password123' });
     user1Id = res1.body._id;
 
-    // Create user 2
     user2Agent = request.agent(app);
     const res2 = await user2Agent.post('/api/auth/signup').send({ username: 'userFollow2', email: 'follow2@example.com', password: 'Password123' });
     user2Id = res2.body._id;
 
-    // Login users
     await user1Agent.post('/api/auth/login').send({ email: 'follow1@example.com', password: 'Password123' });
     await user2Agent.post('/api/auth/login').send({ email: 'follow2@example.com', password: 'Password123' });
 }, 15000);

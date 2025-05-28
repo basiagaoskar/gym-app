@@ -14,21 +14,18 @@ beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri());
 
-    // Użytkownik 1 (główny testowy)
     agent = request.agent(app);
     const user1Res = await agent.post('/api/auth/signup').send({ username: 'workoutuser', email: 'workout@example.com', password: 'Password123' });
     testUserId = user1Res.body._id;
     await agent.post('/api/auth/login').send({ email: 'workout@example.com', password: 'Password123' });
 
 
-    // Użytkownik 2 (inny użytkownik)
     otherAgent = request.agent(app);
     const user2Res = await otherAgent.post('/api/auth/signup').send({ username: 'otherworkoutuser', email: 'otherworkout@example.com', password: 'Password456' });
     otherUserId = user2Res.body._id;
     await otherAgent.post('/api/auth/login').send({ email: 'otherworkout@example.com', password: 'Password456' });
 
 
-    // Ćwiczenia
     const [ex1, ex2] = await Exercise.insertMany([
         { exercise_id: "ex-1", title: "Test Exercise 1", type: "weight_reps", muscle_groups: { primary: "test" }, difficulty: "beginner", instructions: ["Do it"] },
         { exercise_id: "ex-2", title: "Test Exercise 2", type: "weight_reps", muscle_groups: { primary: "test" }, difficulty: "beginner", instructions: ["Do it too"] }
@@ -38,7 +35,6 @@ beforeAll(async () => {
 }, 15000);
 
 beforeEach(async () => {
-    // Czyść tylko kolekcje istotne dla testów workout, a nie użytkowników
     await Workout.deleteMany({});
     await Follow.deleteMany({});
     createdWorkoutId = null;
@@ -69,8 +65,8 @@ describe('Workout API Endpoints', () => {
             expect(res.body).toMatchObject({ title: 'My Test Workout' });
             expect(res.body.exercises).toHaveLength(2);
             expect(res.body).toHaveProperty('duration');
-            expect(res.body).toHaveProperty('likes'); // Sprawdź czy pole likes istnieje
-            expect(res.body.likes).toEqual([]); // Powinno być puste na początku
+            expect(res.body).toHaveProperty('likes');
+            expect(res.body.likes).toEqual([]);
 
             createdWorkoutId = res.body._id;
             const workoutInDb = await Workout.findById(createdWorkoutId);
@@ -92,7 +88,7 @@ describe('Workout API Endpoints', () => {
                 exercises: [{ exercise: testExerciseId1, sets: [{ weight: 1, reps: 1 }] }]
             });
             expect(res.statusCode).toBe(401);
-            expect(res.body.message).toBe('Unauthorized - No Token Provided');
+            expect(res.body.message).toBe('Unauthorized - Please log in to continue');
         });
     });
 
@@ -110,12 +106,10 @@ describe('Workout API Endpoints', () => {
             expect(Array.isArray(res.body)).toBe(true);
             expect(res.body.some(w => w._id === createdWorkoutId.toString())).toBe(true);
             expect(res.body[0].exercises[0].exercise.title).toBe('Test Exercise 1');
-            // Upewnij się, że backend zwraca 'likes' (nawet jeśli puste)
             expect(res.body[0]).toHaveProperty('likes');
         });
 
         it('returns empty array if user has no workouts', async () => {
-            // Użyj ID innego użytkownika, który nie ma treningów
             const res = await agent.get(`/api/workout/user/${otherUserId}`);
             expect(res.statusCode).toBe(200);
             expect(res.body).toHaveLength(0);
@@ -124,7 +118,7 @@ describe('Workout API Endpoints', () => {
         it('returns 401 if unauthenticated', async () => {
             const res = await request(app).get(`/api/workout/user/${testUserId}`);
             expect(res.statusCode).toBe(401);
-            expect(res.body.message).toBe('Unauthorized - No Token Provided');
+            expect(res.body.message).toBe('Unauthorized - Please log in to continue');
         });
     });
 
@@ -141,7 +135,6 @@ describe('Workout API Endpoints', () => {
             expect(res.statusCode).toBe(200);
             expect(res.body._id).toBe(createdWorkoutId.toString());
             expect(res.body.exercises[0].exercise.title).toBe('Test Exercise 1');
-            // Upewnij się, że backend zwraca 'likes'
             expect(res.body).toHaveProperty('likes');
         });
 
@@ -194,7 +187,7 @@ describe('Workout API Endpoints', () => {
         });
 
         it('should require authentication (401)', async () => {
-            const workout = await Workout.create({ // Stwórz trening do usunięcia
+            const workout = await Workout.create({
                 title: "Temp Workout", user: testUserId, startTime: new Date(), endTime: new Date(),
                 exercises: [{ exercise: testExerciseId1, sets: [{ weight: 10, reps: 10 }] }]
             });

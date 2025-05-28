@@ -11,24 +11,20 @@ beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     await mongoose.connect(mongoServer.getUri());
 
-    // Create Admin User
     const adminData = { username: 'adminTestUser', email: 'admin@test.com', password: 'Password123' };
     const adminRes = await request(app).post('/api/auth/signup').send(adminData);
     adminId = adminRes.body._id;
     await User.findByIdAndUpdate(adminId, { role: 'admin' });
 
-    // Create Regular User
     const userData = { username: 'regularTestUser', email: 'user@test.com', password: 'Password123' };
     const userRes = await request(app).post('/api/auth/signup').send(userData);
     regularUserId = userRes.body._id;
 
-    // Create User to be Deleted
     const deleteUserData = { username: 'userToDelete', email: 'delete@test.com', password: 'Password123' };
     const deleteUserRes = await request(app).post('/api/auth/signup').send(deleteUserData);
     userToDeleteId = deleteUserRes.body._id;
 
 
-    // Setup agents and login
     adminAgent = request.agent(app);
     userAgent = request.agent(app);
     await adminAgent.post('/api/auth/login').send({ email: adminData.email, password: adminData.password });

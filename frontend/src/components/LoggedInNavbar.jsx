@@ -18,7 +18,6 @@ function LoggedInNavbar() {
     useEffect(() => {
         const findUser = setTimeout(() => {
             if (searchValue.length > 0) {
-                console.log("Searching for: ", searchValue);
                 searchProfile(searchValue);
             };
         }, 500);
