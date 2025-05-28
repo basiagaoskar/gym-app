@@ -53,6 +53,58 @@ Ziutki Gym is a full-featured web application designed to empower users to take 
         * `Comment`: Stores comments on workouts.
         * `Like`: Tracks user likes on workouts.
 
+## Architecture Diagram
+
+The "Ziutki Gym" application is built using a client-server architecture with an additional worker component (consumer) to handle asynchronous tasks, such as sending welcome emails. The entire system is managed and run using Docker Compose.
+
+### Main Components:
+
+1.  **User (Web Browser):** User interface for interacting with the application.
+2.  **Frontend (React/Vite):** Client-side application built with React (using Vite), responsible for rendering the UI and communicating with the backend API.
+3.  **Backend API (Node.js/Express):** Server-side application handling business logic, data management, and providing a REST API for the frontend.
+4.  **Database (MongoDB):** NoSQL database used to store application data (users, workouts, exercises, etc.).
+5.  **RabbitMQ (Message Broker):** Used for handling asynchronous tasks, such as sending welcome emails after user registration.
+6.  **Consumer (Node.js Worker):** Separate Node.js process that consumes messages from RabbitMQ and performs actions (e.g., sending emails via Nodemailer).
+7.  **Cloudinary (External Service):** External service for storing and delivering images like user avatars.
+8.  **SMTP Server (External Service):** External service used by the Consumer for sending emails.
+
+### Text Diagram:
+
+```
+                                  +---------------------------------+
+                                  |        User (Web Browser)       |
+                                  +----------------+----------------+
+                                                   | (HTTPS)
+                                                   v
+                               +-------------------------------------+
+                               |        Frontend (React / Vite)      |
+                               |    (Zustand, React Router, Axios)   |
+                               +-------------------+-----------------+
+                                                   | (HTTP/REST API Calls, JWT Auth)
+                                                   v
++---------------------------------------------------------------------------------------------------------+
+|                                       Backend Infrastructure                                            |
+|                                                                                                         |
+|    +--------------------------+      +---------------------------+      +---------------------------+   |
+|    |       Backend API        |----->|    Database (MongoDB)     |      |        Cloudinary         |   |
+|    |    (Node.js / Express)   |<-----|     (Data Storage)        |<-----| (External Image Service)  |   |
+|    +-----------+--------------+      +---------------------------+      +---------------------------+   |
+|                |                                                                                        |
+|                v                                                                                        |
+|    +-----------+--------------+      +---------------------------+                                      |
+|    |        RabbitMQ          |----->|     Consumer (Node.js)    |                                      |
+|    |     (Message Broker)     |      |      (Email Worker)       |                                      |
+|    +--------------------------+      +-----------+---------------+                                      |
+|                                                  | (SMTP)                                               |
+|                                                  v                                                      |
+|                                      +-----------+---------------+                                      |
+|                                      |      SMTP Server          |                                      |
+|                                      | (External Email Service)  |                                      |
+|                                      +---------------------------+                                      |
+|                                                                                                         |
++---------------------------------------------------------------------------------------------------------+
+```
+
 ## Database Schema
 
 ![Ziutki Gym Database Schema](./diagramERD.png)
