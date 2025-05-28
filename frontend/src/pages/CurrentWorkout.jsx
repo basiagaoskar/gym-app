@@ -41,7 +41,11 @@ const CurrentWorkoutPage = () => {
     async function handleFinishWorkout() {
         try {
             const savedWorkout = await endWorkout()
-            navigate(`/workout/${savedWorkout._id}`)
+            if (savedWorkout && savedWorkout._id) {
+                navigate(`/workout/${savedWorkout._id}`)
+            } else {
+                navigate('/home');
+            }
         } catch (error) {
             console.error("Failed to finish workout:", error);
         }
@@ -54,6 +58,18 @@ const CurrentWorkoutPage = () => {
             ) &&
             exercise.title.toLowerCase().includes(searchQuery)
         )
+
+    const canFinishWorkout =
+        currentWorkout.exercises &&
+        currentWorkout.exercises.length > 0 &&
+        currentWorkout.exercises.every(exercise =>
+            exercise.sets &&
+            exercise.sets.length > 0 &&
+            exercise.sets.every(set =>
+                set.weight !== null && set.weight !== '' && parseFloat(set.weight) >= 0 &&
+                set.reps !== null && set.reps !== '' && parseInt(set.reps) > 0
+            )
+        );
 
     return (
         <div className="min-h-screen bg-base-200 text-base-content pt-20 pb-10">
@@ -69,7 +85,11 @@ const CurrentWorkoutPage = () => {
                     <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center hidden sm:block whitespace-nowrap px-2">
                         Current Workout
                     </h1>
-                    <button className="btn btn-success btn-sm sm:btn-md" onClick={handleFinishWorkout} disabled={currentWorkout.exercises.length === 0}>
+                    <button 
+                        className="btn btn-success btn-sm sm:btn-md" 
+                        onClick={handleFinishWorkout} 
+                        disabled={!canFinishWorkout}
+                    >
                         Finish Workout
                     </button>
                 </div>
