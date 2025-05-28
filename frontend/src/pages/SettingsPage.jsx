@@ -63,10 +63,27 @@ function SettingsPage() {
     const validatePassword = () => {
         const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
 
-        if (!passwordData.currentPassword) return toast.error("Password is required");
-        if (!passwordPattern.test(passwordData.newPassword)) return toast.error("New password must be at least 8 characters, including number, lowercase letter, uppercase letter");
-                    if (passwordData.newPassword != passwordData.confirmNewPassword) return toast.error("Passwords do not match");
-            
+        if (!passwordData.currentPassword) {
+             toast.error("Current password is required");
+             return false;
+        }
+        if (!passwordData.newPassword) {
+            toast.error("New password is required");
+            return false;
+        }
+        if (!passwordPattern.test(passwordData.newPassword)) {
+            toast.error("New password must be at least 8 characters, including a number, a lowercase letter, and an uppercase letter.");
+            return false;
+        }
+        if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+            toast.error("New passwords do not match.");
+            return false;
+        }
+        if (passwordData.currentPassword === passwordData.newPassword) {
+            toast.error("New password cannot be the same as the current password.");
+            return false;
+        }
+
         return true
     }
 

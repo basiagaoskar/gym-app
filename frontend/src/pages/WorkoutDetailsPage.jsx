@@ -21,7 +21,7 @@ const WorkoutDetailsPage = () => {
     const handleDeleteWorkout = async () => {
         try {
             await deleteWorkout(workoutId);
-            navigate(`/user/${authUser.username}`);
+            navigate(-1);
         } catch (error) {
             console.error("Error deleting workout:", error);
         }
