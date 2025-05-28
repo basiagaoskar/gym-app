@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react' 
 import { useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Camera, CircleHelp, Lock, Mail, Palette, Pen, ReceiptText, Settings, User, UserPen } from 'lucide-react'
 import { toast } from "react-hot-toast"
@@ -35,6 +35,8 @@ function SettingsPage() {
         confirmNewPassword: ''
     })
 
+    const deleteConfirmationModalRef = useRef(null);
+
     const handleTabChange = (tab) => {
         setSearchParams({ tab });
     }
@@ -63,14 +65,23 @@ function SettingsPage() {
 
         if (!passwordData.currentPassword) return toast.error("Password is required");
         if (!passwordPattern.test(passwordData.newPassword)) return toast.error("New password must be at least 8 characters, including number, lowercase letter, uppercase letter");
-        if (passwordData.newPassword != passwordData.confirmNewPassword) return toast.error("Passwords do not match");
-
+                    if (passwordData.newPassword != passwordData.confirmNewPassword) return toast.error("Passwords do not match");
+            
         return true
     }
 
     function handlePasswordSubmit(e) {
         e.preventDefault()
         if (validatePassword()) updatePassword(passwordData)
+    }
+
+    const handleDeleteAccountClick = () => {
+        deleteConfirmationModalRef.current.showModal();
+    }
+
+    const handleConfirmDeleteAccount = () => {
+        deleteAccount();
+        deleteConfirmationModalRef.current.close();
     }
 
     return (
@@ -82,7 +93,6 @@ function SettingsPage() {
 
                     <div className="flex flex-col md:flex-row gap-16">
 
-                        {/* Mobile sidebar */}
                         {activeTab === 'null' && (
                             <div className="w-full md:hidden flex flex-col gap-3">
                                 {settingsOptions.map((option) => (
@@ -100,7 +110,6 @@ function SettingsPage() {
                             </div>
                         )}
 
-                        {/* Desktop sidebar */}
                         <aside className="w-full md:w-40 hidden md:block">
                             <ul className="space-y-2">
                                 {settingsOptions.map((option) => (
@@ -123,7 +132,6 @@ function SettingsPage() {
                             </div>
                         )}
 
-                        {/* Mobile: Widok szczegółowy */}
                         {activeTab !== 'null' && (
                             <div className="w-full md:w-7/10">
                                 <button
@@ -134,7 +142,6 @@ function SettingsPage() {
                                     Back
                                 </button>
 
-                                {/* Profile */}
                                 {activeTab === "profile" && (
                                     <>
                                         <h2 className="text-xl font-bold">Profile Settings</h2>
@@ -183,13 +190,14 @@ function SettingsPage() {
                                                 }}></textarea>
                                             </div>
 
-                                            <button className="btn btn-primary mt-6 w-full">Save Changes</button>
+                                            <button className="btn btn-primary mt-6 w-full" disabled={isUpdatingProfile}>
+                                                {isUpdatingProfile ? "Saving..." : "Save Changes"}
+                                            </button>
                                         </form>
 
                                     </>
                                 )}
 
-                                {/* Theme */}
                                 {activeTab === "theme" && (
                                     <>
                                         <h2 className="text-xl font-bold">Theme Settings</h2>
@@ -218,7 +226,6 @@ function SettingsPage() {
                                             ))}
                                         </div>
 
-                                        {/* Mobile */}
                                         <div className="md:hidden mt-3">
                                             <select className="select w-30 font-semibold capitalize" value={theme} onChange={(e) => setTheme(e.target.value)}>
                                                 {THEMES.map((t) => (
@@ -231,7 +238,6 @@ function SettingsPage() {
                                     </>
                                 )}
 
-                                {/* Subscription */}
                                 {activeTab === "subscription" && (
                                     <>
                                         <h2 className="text-xl font-bold">Subscription Settings</h2>
@@ -245,7 +251,6 @@ function SettingsPage() {
                                     </>
                                 )}
 
-                                {/* Security */}
                                 {activeTab === "security" && (
                                     <>
                                         <h2 className="text-xl font-bold">Security Settings</h2>
@@ -262,15 +267,18 @@ function SettingsPage() {
                                                 <button className="btn btn-primary mt-4" disabled={isUpdatingPassword}>Update Password</button>
                                             </form>
                                         </div>
-                                        <div className="mt-14">
-                                            <h3 className="text-lg font-bold text-error">Delete Account</h3>
-                                            <p className="text-sm text-base-content">Permanently delete your account. This action cannot be undone.</p>
-                                            <button className="btn btn-error mt-3" onClick={deleteAccount}>Delete Account</button>
+                                        <div className="mt-14 p-4 bg-base-100 rounded-lg shadow border-l-4 border-error">
+                                            <h3 className="text-lg font-bold text-error">
+                                                Delete Account
+                                            </h3>
+                                            <p className="text-sm text-base-content my-2">
+                                                Permanently delete your account. This action cannot be undone and all your data will be lost.
+                                            </p>
+                                            <button className="btn btn-error" onClick={handleDeleteAccountClick}>Delete Account</button>
                                         </div>
                                     </>
                                 )}
 
-                                {/* Support */}
                                 {activeTab === "support" && (
                                     <>
                                         <h2 className="text-xl font-bold">Support</h2>
@@ -291,6 +299,22 @@ function SettingsPage() {
                     </div>
                 </div>
             </div>
+
+            <dialog ref={deleteConfirmationModalRef} id="delete_account_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg text-error flex items-center gap-2">
+                        Confirm Account Deletion
+                    </h3>
+                    <p className="py-4">Are you absolutely sure you want to delete your account? This action is irreversible and all your data will be permanently lost.</p>
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => deleteConfirmationModalRef.current.close()}>Cancel</button>
+                        <button className="btn btn-error" onClick={handleConfirmDeleteAccount}>Yes, Delete My Account</button>
+                    </div>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
         </>
     )
 }
