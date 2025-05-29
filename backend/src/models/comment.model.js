@@ -11,6 +11,7 @@ const commentSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Workout",
             required: true,
+            index: true,
         },
         content: {
             type: String,
